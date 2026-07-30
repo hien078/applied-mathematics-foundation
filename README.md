@@ -1,11 +1,11 @@
-# Mathematics for Machine Learning from Scratch 🧮
+# Applied Mathematics Foundation 🧮
 
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Jupyter](https://img.shields.io/badge/Jupyter-Lab-orange.svg)](https://jupyter.org/)
 [![NumPy](https://img.shields.io/badge/NumPy-2.4+-blue.svg)](https://numpy.org/)
 
-First-principles mathematical foundations for machine learning and artificial intelligence. Rigorous derivations, geometric intuition, interactive Jupyter notebooks, and NumPy-verified implementations synchronized from [first-principles-math-modeling](https://github.com/hien078/first-principles-math-modeling).
+First-principles mathematical foundations for machine learning and artificial intelligence. Rigorous derivations, geometric intuition, interactive Jupyter notebooks, and NumPy-verified implementations.
 
 > 📌 **Sister Repository:** Applied algorithm implementations and full ML model pipelines are available in [Machine-Learning-from-scratch](https://github.com/hien078/Machine-Learning-from-scratch).
 
@@ -73,8 +73,8 @@ First-principles mathematical foundations for machine learning and artificial in
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/hien078/Mathematics-for-ML-from-scratch.git
-cd Mathematics-for-ML-from-scratch
+git clone https://github.com/hien078/applied-mathematics-foundation.git
+cd applied-mathematics-foundation
 ```
 
 ### 2. Set Up Environment
