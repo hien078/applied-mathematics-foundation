@@ -44,6 +44,6 @@ Subtracting $m$ leaves the mathematical ratio unchanged while preventing overflo
 
 ## Connections
 
-- [Linear Regression](../../topics/01_linear_regression/README.md)
-- [Naive Bayes](../../topics/08_naive_bayes/README.md)
-- [Neural Networks](../../topics/13_neural_networks/README.md)
+- [Linear Regression](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/01_linear_regression/README.md)
+- [Naive Bayes](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/08_naive_bayes/README.md)
+- [Neural Networks](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/13_neural_networks/README.md)

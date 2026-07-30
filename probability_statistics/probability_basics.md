@@ -40,7 +40,7 @@ properties. A low training loss alone establishes none of them.
 
 ## ML Connections
 
-- [Linear Regression](../../topics/01_linear_regression/README.md): noise and inference
-- [Logistic Regression](../../topics/04_logistic_regression/README.md): Bernoulli likelihood
-- [Naive Bayes](../../topics/08_naive_bayes/README.md): conditional independence
-- [Clustering](../../topics/11_clustering/README.md): mixture likelihoods
+- [Linear Regression](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/01_linear_regression/README.md): noise and inference
+- [Logistic Regression](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/04_logistic_regression/README.md): Bernoulli likelihood
+- [Naive Bayes](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/08_naive_bayes/README.md): conditional independence
+- [Clustering](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/11_clustering/README.md): mixture likelihoods

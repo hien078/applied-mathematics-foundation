@@ -29,7 +29,7 @@ log-likelihood of categorical targets.
 
 ## Connections
 
-- [Decision Tree](../../topics/05_decision_tree/README.md)
-- [Logistic Regression](../../topics/04_logistic_regression/README.md)
-- [Dimensionality Reduction](../../topics/12_dimensionality_reduction/README.md)
-- [Loss Functions](../../synthesis/loss_functions_map.md)
+- [Decision Tree](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/05_decision_tree/README.md)
+- [Logistic Regression](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/04_logistic_regression/README.md)
+- [Dimensionality Reduction](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/12_dimensionality_reduction/README.md)
+- [Loss Functions](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/synthesis/loss_functions_map.md)

@@ -114,6 +114,6 @@ stability analysis.
 
 ## Connections
 
-- [Gradient Descent](../../topics/02_gradient_descent/README.md)
-- [Logistic Regression](../../topics/04_logistic_regression/README.md)
-- [Neural Networks](../../topics/13_neural_networks/README.md)
+- [Gradient Descent](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/02_gradient_descent/README.md)
+- [Logistic Regression](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/04_logistic_regression/README.md)
+- [Neural Networks](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/13_neural_networks/README.md)

@@ -11,6 +11,6 @@
 
 ## Used By
 
-- [04 Logistic Regression](../../topics/04_logistic_regression/README.md)
-- [08 Naive Bayes](../../topics/08_naive_bayes/README.md)
-- [11 Clustering (GMM)](../../topics/11_clustering/README.md)
+- [04 Logistic Regression](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/04_logistic_regression/README.md)
+- [08 Naive Bayes](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/08_naive_bayes/README.md)
+- [11 Clustering (GMM)](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/11_clustering/README.md)

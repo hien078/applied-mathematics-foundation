@@ -9,6 +9,6 @@
 
 ## Used By
 
-- [05 Decision Tree](../../topics/05_decision_tree/README.md) — entropy splitting
-- [04 Logistic Regression](../../topics/04_logistic_regression/README.md) — cross-entropy loss
-- [13 Neural Networks](../../topics/13_neural_networks/README.md) — loss functions
+- [05 Decision Tree](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/05_decision_tree/README.md) — entropy splitting
+- [04 Logistic Regression](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/04_logistic_regression/README.md) — cross-entropy loss
+- [13 Neural Networks](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/13_neural_networks/README.md) — loss functions

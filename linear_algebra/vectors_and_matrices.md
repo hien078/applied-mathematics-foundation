@@ -135,8 +135,8 @@ equivalently all eigenvalues are strictly positive.
 
 ## ML Connections
 
-- [Linear Regression](../../topics/01_linear_regression/README.md): projections and rank
-- [KNN](../../topics/07_knn/README.md): norms and feature geometry
-- [SVM](../../topics/09_svm/README.md): hyperplanes and margins
-- [PCA](../../topics/10_pca/README.md): eigenvectors and SVD
-- [Neural Networks](../../topics/13_neural_networks/README.md): matrix transformations
+- [Linear Regression](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/01_linear_regression/README.md): projections and rank
+- [KNN](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/07_knn/README.md): norms and feature geometry
+- [SVM](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/09_svm/README.md): hyperplanes and margins
+- [PCA](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/10_pca/README.md): eigenvectors and SVD
+- [Neural Networks](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/13_neural_networks/README.md): matrix transformations

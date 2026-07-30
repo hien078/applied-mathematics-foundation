@@ -11,6 +11,6 @@
 
 ## Used By
 
-- [02 Gradient Descent](../../topics/02_gradient_descent/README.md)
-- [03 Regularization](../../topics/03_regularization/README.md)
-- [13 Neural Networks](../../topics/13_neural_networks/README.md) — backpropagation
+- [02 Gradient Descent](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/02_gradient_descent/README.md)
+- [03 Regularization](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/03_regularization/README.md)
+- [13 Neural Networks](https://github.com/hien078/Machine-Learning-from-scratch/blob/master/topics/13_neural_networks/README.md) — backpropagation
