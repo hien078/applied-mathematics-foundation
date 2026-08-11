@@ -233,7 +233,7 @@ Linear Programming (LP) ⊂ Quadratic Programming (QP) ⊂ Second-Order Cone Pro
 |---|---|---|---|
 | **LP** | Linear: $\mathbf{c}^T \mathbf{x}$ | Linear inequalities/equalities | $\min \mathbf{c}^T \mathbf{x} \;\text{s.t.}\; A\mathbf{x} \le \mathbf{b}$ |
 | **QP** | Quadratic: $\frac{1}{2}\mathbf{x}^T Q \mathbf{x} + \mathbf{c}^T \mathbf{x}$ ($Q \succeq 0$) | Linear inequalities/equalities | $\min \frac{1}{2}\mathbf{x}^T Q \mathbf{x} + \mathbf{c}^T \mathbf{x} \;\text{s.t.}\; A\mathbf{x} \le \mathbf{b}$ |
-| **SOCP** | Linear: $\mathbf{f}^T \mathbf{x}$ | Second-order cone constraints | $\min \mathbf{f}^T \mathbf{x} \;\text{s.t.}\; \|A_i \mathbf{x} + \mathbf{b}_i\|_2 \le \mathbf{c}_i^T \mathbf{x} + d_i$ |
+| **SOCP** | Linear: $\mathbf{f}^T \mathbf{x}$ | Second-order cone constraints | $\min \mathbf{f}^T \mathbf{x} \;\text{s.t.}\; \Vert A_i \mathbf{x} + \mathbf{b}_i\Vert_2 \le \mathbf{c}_i^T \mathbf{x} + d_i$ |
 | **SDP** | Linear matrix trace: $\text{tr}(C X)$ | Linear matrix inequalities (LMI) | $\min \text{tr}(C X) \;\text{s.t.}\; \text{tr}(A_i X) = b_i,\; X \succeq 0$ |
 
 ---
@@ -458,11 +458,11 @@ Estimating parameters $\boldsymbol{\theta}$ from noisy data $y_i = h(x_i; \bolds
 
 | Machine Learning Task | Optimization Formulation | Solver / Algorithm |
 |---|---|---|
-| Linear Regression | $\min_{\mathbf{w}} \frac{1}{2}\|X\mathbf{w} - \mathbf{y}\|_2^2$ | Normal Equations $(X^TX)^{-1}X^T\mathbf{y}$ or Gradient Descent |
+| Linear Regression | $\min_{\mathbf{w}} \frac{1}{2}\Vert X\mathbf{w} - \mathbf{y}\Vert_2^2$ | Normal Equations $(X^TX)^{-1}X^T\mathbf{y}$ or Gradient Descent |
 | Logistic Regression | $\min_{\mathbf{w}} \sum_i \log(1 + e^{-y_i \mathbf{w}^T \mathbf{x}_i})$ | L-BFGS, Newton-Raphson (IRLS) |
-| Support Vector Machine (SVM) | $\min_{\mathbf{w}, b} \frac{1}{2}\|\mathbf{w}\|_2^2 + C \sum_i \max(0, 1 - y_i(\mathbf{w}^T \mathbf{x}_i + b))$ | Convex QP / Sequential Minimal Optimization (SMO) |
+| Support Vector Machine (SVM) | $\min_{\mathbf{w}, b} \frac{1}{2}\Vert\mathbf{w}\Vert_2^2 + C \sum_i \max(0, 1 - y_i(\mathbf{w}^T \mathbf{x}_i + b))$ | Convex QP / Sequential Minimal Optimization (SMO) |
 | Deep Learning Training | $\min_{\boldsymbol{\theta}} \frac{1}{N}\sum_i \mathcal{L}(f_{\boldsymbol{\theta}}(\mathbf{x}_i), y_i)$ | SGD with Momentum, Adam, AdamW |
-| Sparse Feature Selection | $\min_{\mathbf{w}} \frac{1}{2}\|X\mathbf{w} - \mathbf{y}\|_2^2 + \lambda \|\mathbf{w}\|_1$ | Proximal Gradient Descent (FISTA) |
+| Sparse Feature Selection | $\min_{\mathbf{w}} \frac{1}{2}\Vert X\mathbf{w} - \mathbf{y}\Vert_2^2 + \lambda \Vert\mathbf{w}\Vert_1$ | Proximal Gradient Descent (FISTA) |
 
 ---
 

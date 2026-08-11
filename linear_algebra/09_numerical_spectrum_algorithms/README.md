@@ -34,7 +34,7 @@ graph TD
 | :--- | :--- | :--- |
 | **Power Iteration** | Iteratively multiplies a vector by $A$ to find the dominant eigenvalue and eigenvector. | Convergence rate: $\mathcal{O}(\vert\lambda_2 / \lambda_1\vert^k)$ |
 | **Inverse Iteration** | Applies power iteration to $(A - \mu I)^{-1}$ to find the eigenvalue closest to shift $\mu$. | Convergence rate: $\mathcal{O}(\vert(\lambda_{\text{closest}} - \mu) / (\lambda_{\text{next}} - \mu)\vert^k)$ |
-| **Rayleigh Quotient Iteration** | Adapts the shift $\mu_k$ using the Rayleigh quotient to achieve cubic convergence for symmetric matrices. | $\mu_k = \frac{x_k^T A x_k}{x_k^T x_k}$, Cubic convergence: $\|x_{k+1} - v\| = \mathcal{O}(\|x_k - v\|^3)$ |
+| **Rayleigh Quotient Iteration** | Adapts the shift $\mu_k$ using the Rayleigh quotient to achieve cubic convergence for symmetric matrices. | $\mu_k = \frac{x_k^T A x_k}{x_k^T x_k}$, Cubic convergence: $\Vert x_{k+1} - v\Vert = \mathcal{O}(\Vert x_k - v\Vert^3)$ |
 | **Hessenberg Reduction** | Preprocessing step that uses Householder reflectors to reduce $A$ to upper Hessenberg form. | Complexity: $\frac{10}{3}n^3 \text{ flops}$ |
 | **QR Algorithm** | Iteratively computes QR factorization $A_k = Q_k R_k$ and updates $A_{k+1} = R_k Q_k$ to converge to Schur form. | Complexity per step (Hessenberg): $\mathcal{O}(n^2)$ |
 | **Arnoldi Iteration** | Orthogonal projection onto Krylov subspace $\mathcal{K}_m(A, b)$ for non-symmetric sparse matrices. | $A Q_m = Q_m H_m + h_{m+1, m} q_{m+1} e_m^T$ |

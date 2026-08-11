@@ -48,7 +48,7 @@ This foundation is used directly by:
 
 | File | Description |
 |---|---|
-| [`theory.md`](theory.md) | Axioms, Bayes' theorem, multivariate distributions, parameter estimation (MLE/MAP), information theory, SDEs, AI bridge |
+| [`first_principles.md`](first_principles.md) | Axioms, Bayes' theorem, multivariate distributions, parameter estimation (MLE/MAP), information theory, SDEs, AI bridge |
 | [`computation.ipynb`](computation.ipynb) | Distribution plotting, Monte Carlo $\pi$, CLT demo, Bayes example, random walks |
 | [`exercises.md`](exercises.md) | Topic 13 Curriculum Module & 4-Level Exercise Package (L0–L3) with first-principles intuitions & detailed solutions |
 

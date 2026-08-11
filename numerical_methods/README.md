@@ -31,7 +31,7 @@ After working through this material, you should be able to:
 
 | File | Description |
 |------|-------------|
-| [theory.md](theory.md) | Core theory: floating point, root finding, interpolation, quadrature, least squares |
+| [first_principles.md](first_principles.md) | Core theory: floating point, root finding, interpolation, quadrature, least squares |
 | [computation.ipynb](computation.ipynb) | Computational examples: algorithm implementations, convergence plots, error analysis |
 
 ## Dependent Topics

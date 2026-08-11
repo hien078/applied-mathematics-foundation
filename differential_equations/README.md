@@ -31,7 +31,7 @@ After working through this material, you should be able to:
 
 | File | Description |
 |------|-------------|
-| [theory.md](theory.md) | Core theory: classification, solution methods, systems, qualitative analysis |
+| [first_principles.md](first_principles.md) | Core theory: classification, solution methods, systems, qualitative analysis |
 | [computation.ipynb](computation.ipynb) | Computational examples: `solve_ivp`, phase portraits, numerical methods |
 
 ## Dependent Topics

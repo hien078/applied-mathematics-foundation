@@ -75,8 +75,8 @@ graph TD
 This module contains the following core files:
 
 1. **[`README.md`](README.md)**: Module executive summary, learning objectives, concept map, misconceptions table, directory inventory, and canonical reference list.
-2. **[`first_principles.md`](first_principles.md)**: Comprehensive first-principles theory, rigorous limit definitions, full proofs (including Carathéodory's chain rule and General Leibniz rule), local linearity asymptotics $O(h^2)$, forward-mode dual number auto-differentiation, and physics/AI applications.
-3. **[`exercises.md`](exercises.md)**: A complete 40-problem 4-level exercise package and step-by-step solutions manual spanning:
+2. **[`first_principles.ipynb`](first_principles.ipynb)**: Comprehensive first-principles theory, rigorous limit definitions, full proofs (including Carathéodory's chain rule and General Leibniz rule), local linearity asymptotics $O(h^2)$, forward-mode dual number auto-differentiation, and physics/AI applications.
+3. **[`exercises.ipynb`](exercises.ipynb)**: A complete 40-problem 4-level exercise package and step-by-step solutions manual spanning:
    - **Level 0 (Concept Check)**: 8 fundamental conceptual and geometric questions.
    - **Level 1 (Foundation)**: 10 core standard textbook and computational problems.
    - **Level 2 (Applications in Physics & AI/ML)**: 12 applied problems (kinematics, activation functions, backprop, autograd, implicit layers).

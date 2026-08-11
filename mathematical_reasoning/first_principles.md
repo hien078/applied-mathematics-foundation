@@ -637,7 +637,7 @@ If dimensions don't match, there is definitely an error.
 |--------|-----------|
 | Contrapositive: $(p \to q) \equiv (\neg q \to \neg p)$ | §1.4 |
 | Quantifier negation: $\neg(\forall x \, P(x)) \equiv \exists x \, \neg P(x)$ | §2.3 |
-| Inclusion-Exclusion: $\|A \cup B\| = \|A\| + \|B\| - \|A \cap B\|$ | §4.3 |
+| Inclusion-Exclusion: $\vert A \cup B\vert = \vert A\vert + \vert B\vert - \vert A \cap B\vert$ | §4.3 |
 | Sum formula: $\sum_{i=1}^{n} i = n(n+1)/2$ | §5.2 |
 | Geometric series: $\sum_{i=0}^{n} r^i = (r^{n+1}-1)/(r-1)$ | §5.3 |
 | Dimensional consistency of equations | §6.2 |

@@ -19,7 +19,7 @@ This document provides a comprehensive, first-principles foundation of probabili
 | Coin flip | $\{H, T\}$ | $A = \{H\}$ ("heads") |
 | Die roll | $\{1, 2, 3, 4, 5, 6\}$ | $A = \{2, 4, 6\}$ ("even outcome") |
 | Lifetime of a component | $[0, \infty)$ | $A = [100, \infty)$ ("lasts over 100 hours") |
-| Sensor noise trajectory | $\mathbb{R}^d$ | $A = \{\mathbf{x} \in \mathbb{R}^d \mid \|\mathbf{x}\|_2 \le \epsilon\}$ ("bounded error") |
+| Sensor noise trajectory | $\mathbb{R}^d$ | $A = \{\mathbf{x} \in \mathbb{R}^d \mid \Vert\mathbf{x}\Vert_2 \le \epsilon\}$ ("bounded error") |
 
 ### 1.2 Kolmogorov Axioms
 

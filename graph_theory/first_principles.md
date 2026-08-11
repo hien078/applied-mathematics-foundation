@@ -532,7 +532,7 @@ This directly builds on:
 
 | Result | Formula |
 |--------|---------|
-| Handshaking Lemma | $\sum_{v} \deg(v) = 2|E|$ |
+| Handshaking Lemma | $\sum_{v} \deg(v) = 2\vert E \vert$ |
 | Walks via adjacency matrix | $(A^k)_{ij}$ = number of walks of length $k$ |
 | Graph Laplacian | $L = D - A = BB^\top$ |
 | Tree edge count | $n$ vertices $\implies$ $n-1$ edges |

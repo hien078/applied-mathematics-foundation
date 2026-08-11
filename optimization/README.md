@@ -30,7 +30,7 @@ After working through this material, you should be able to:
 
 | File | Description |
 |------|-------------|
-| [theory.md](theory.md) | Core theory: formulation, unconstrained/constrained optimization, convexity, LP |
+| [first_principles.md](first_principles.md) | Core theory: formulation, unconstrained/constrained optimization, convexity, LP |
 | [computation.ipynb](computation.ipynb) | Computational examples: gradient descent, scipy.optimize, linear programming |
 
 ## Dependent Topics
@@ -39,7 +39,7 @@ The following modeling topics build directly on this foundation:
 
 - **10 — Optimization Models:** Resource allocation, scheduling, and design problems
   formulated as mathematical programs
-- **11 — Constrained Optimization & Lagrange Multipliers:** Comprehensive curriculum module, KKT theory, duality, SVM duals, MaxEnt, and 4-level exercise package ([../../topics/11_constrained_optimization/](../../topics/11_constrained_optimization/))
+- **11 — Constrained Optimization & Lagrange Multipliers:** Comprehensive curriculum module, KKT theory, duality, SVM duals, MaxEnt, and 4-level exercise package
 
 ## Key References
 
