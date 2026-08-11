@@ -1,4 +1,4 @@
-# Supported environment: CPython 3.14 on Linux.
+# Supported environment: CPython 3.12+ on Linux (validated on 3.14).
 # These are direct dependency pins. A complete transitive lock is generated
 # from a clean, successfully validated virtual environment.
 
@@ -10,6 +10,10 @@ scipy==1.17.1
 # Visualization and classical machine learning
 matplotlib==3.10.9
 scikit-learn==1.9.0
+
+# Symbolic mathematics and graph algorithms
+sympy==1.14.0
+networkx==3.6.1
 
 # Jupyter authoring and programmatic execution
 jupyterlab==4.5.8
