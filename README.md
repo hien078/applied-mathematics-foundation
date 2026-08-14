@@ -42,30 +42,110 @@ First-principles mathematical foundations for machine learning and artificial in
 - **14.** Vector Calculus & Field Theorems (Green, Stokes, Divergence)
 - **15.** Ordinary Differential Equations (ODEs)
 
-### 3. 🎯 Optimization & Calculus Optimization ([`optimization/`](optimization/README.md), [`calculus_optimization/`](calculus_optimization/README.md))
-- Unconstrained & Constrained Optimization (Lagrange Multipliers, KKT Conditions)
-- Gradient Descent Mechanics, Line Search, Newton-Raphson & Quasi-Newton (BFGS)
-- Optimization Landscapes, Smoothness, Convexity & Taylor Approximations
+### 3. 🎯 Optimization ([`optimization/`](optimization/README.md))
+- **01.** Problem Formulation & Convexity
+- **02.** Unconstrained Optimality Conditions
+- **03.** Gradient Descent & Convergence Analysis
+- **04.** Line Search, Newton & Quasi-Newton (BFGS, L-BFGS)
+- **05.** Constrained Optimization & Lagrange Multipliers
+- **06.** KKT Conditions & Duality
+- **07.** Linear, Quadratic & Conic Programs
+- **08.** Stochastic Optimization for Machine Learning
 
-### 4. 🎲 Probability & Statistics ([`probability_statistics/`](probability_statistics/README.md))
-- Probability Basics, Axioms & Conditional Probability
-- Discrete & Continuous Distributions, Multivariate Normal
-- Expectation, Variance, Covariance & Law of Large Numbers
-- Maximum Likelihood Estimation (MLE) & Bayesian Inference
+### 4. 📉 Calculus → Optimization Bridge ([`calculus_optimization/`](calculus_optimization/README.md))
+- **01.** Derivatives & Gradients for Machine Learning
+- **02.** Taylor Approximation & Local Models
+- **03.** Gradient Descent Mechanics
+- **04.** Optimization Landscapes & Convexity
 
-### 5. 📊 Information Theory ([`information_theory/`](information_theory/README.md))
-- Information Entropy, Joint & Conditional Entropy
-- Cross-Entropy, Relative Entropy & KL Divergence
-- Mutual Information & Applications in Deep Learning / VAEs
+### 5. 🎲 Probability & Statistics ([`probability_statistics/`](probability_statistics/README.md))
+- **01.** Sample Spaces & Probability Axioms
+- **02.** Conditional Probability & Bayes' Theorem
+- **03.** Random Variables & Distribution Functions
+- **04.** Discrete Distributions
+- **05.** Continuous Distributions
+- **06.** Expectation, Variance & Moments
+- **07.** Joint Distributions & the Multivariate Normal
+- **08.** Law of Large Numbers & Central Limit Theorem
+- **09.** Maximum Likelihood & MAP Estimation
+- **10.** Bayesian Inference
 
-### 6. ⚙️ Numerical Methods & Computing ([`numerical_methods/`](numerical_methods/README.md), [`numerical_computing/`](numerical_computing/README.md))
-- Floating-Point Arithmetic, Overflow/Underflow & Stability
-- Conditioning, Condition Numbers & Ill-Posed Problems
-- Vectorization & High-Performance Matrix Operations in NumPy
+### 6. 📊 Information Theory ([`information_theory/`](information_theory/README.md))
+- **01.** Self-Information & Entropy
+- **02.** Joint & Conditional Entropy
+- **03.** Cross-Entropy & Loss Functions
+- **04.** KL Divergence & $f$-Divergences
+- **05.** Mutual Information
+- **06.** Information Theory in Deep Learning (IB, ELBO, InfoNCE)
 
-### 7. 🕸️ Graph Theory & Mathematical Reasoning ([`graph_theory/`](graph_theory/README.md), [`mathematical_reasoning/`](mathematical_reasoning/README.md))
-- Graph Representations, Adjacency Matrices & Spectral Graph Theory
-- Mathematical Proof Techniques, Formal Induction & Symbolic Computation
+### 7. 🔢 Numerical Methods ([`numerical_methods/`](numerical_methods/README.md))
+- **01.** Error Analysis & Floating Point
+- **02.** Root-Finding Methods
+- **03.** Fixed-Point Iteration & Convergence
+- **04.** Polynomial & Spline Interpolation
+- **05.** Numerical Differentiation
+- **06.** Numerical Integration (Quadrature)
+- **07.** Linear Least Squares
+- **08.** Numerical ODE Solvers
+
+### 8. ⚙️ Numerical Computing ([`numerical_computing/`](numerical_computing/README.md))
+- **01.** IEEE 754 Floating-Point Representation
+- **02.** Error Propagation & Stability Tricks
+- **03.** Conditioning & Condition Numbers
+- **04.** Vectorization & NumPy Performance
+- **05.** Numerical Stability in Deep Learning
+
+### 9. 🌊 Differential Equations ([`differential_equations/`](differential_equations/README.md))
+- **01.** Classification & First-Order ODEs
+- **02.** Existence, Uniqueness & Picard-Lindelöf
+- **03.** Second-Order Linear ODEs
+- **04.** Systems of ODEs & the Matrix Exponential
+- **05.** Phase Plane & Stability Analysis
+- **06.** Laplace Transform Methods
+- **07.** Boundary Value Problems & PDE Preview
+- **08.** ODEs in Machine Learning (Neural ODEs)
+
+### 10. 🕸️ Graph Theory ([`graph_theory/`](graph_theory/README.md))
+- **01.** Graph Fundamentals & Representations
+- **02.** Traversal & Connectivity
+- **03.** Trees & Minimum Spanning Trees
+- **04.** Shortest Path Algorithms
+- **05.** Flows, Matchings & Bipartite Graphs
+- **06.** Graph Laplacian & Spectral Theory
+- **07.** Spectral Clustering & GNN Applications
+
+### 11. 🧠 Mathematical Reasoning ([`mathematical_reasoning/`](mathematical_reasoning/README.md))
+- **01.** Propositional & Predicate Logic
+- **02.** Sets, Relations & Functions
+- **03.** Proof Techniques
+- **04.** Induction & Recursion
+- **05.** Combinatorics & Counting
+- **06.** Asymptotics & Algorithmic Reasoning
+
+---
+
+## 📊 Curriculum at a Glance
+
+| Area | Modules | Solved Problems |
+|---|:---:|:---:|
+| [Linear Algebra](linear_algebra/README.md) | 10 | 400 |
+| [Calculus](calculus/README.md) | 15 | 600 |
+| [Optimization](optimization/README.md) | 8 | 160 |
+| [Calculus → Optimization](calculus_optimization/README.md) | 4 | 80 |
+| [Probability & Statistics](probability_statistics/README.md) | 10 | 200 |
+| [Information Theory](information_theory/README.md) | 6 | 120 |
+| [Numerical Methods](numerical_methods/README.md) | 8 | 128 |
+| [Numerical Computing](numerical_computing/README.md) | 5 | 100 |
+| [Differential Equations](differential_equations/README.md) | 8 | 160 |
+| [Graph Theory](graph_theory/README.md) | 7 | 140 |
+| [Mathematical Reasoning](mathematical_reasoning/README.md) | 6 | 120 |
+| **TOTAL** | **87** | **2,208** |
+
+Every module folder follows the same three-file architecture:
+
+1. **`README.md`** — master overview, first-principles framework, Mermaid concept map, common-misconceptions table, directory inventory, and canonical references.
+2. **`first_principles.ipynb`** — intuition and motivation, rigorous definitions and theorem statements, step-by-step proofs, computational insights, and physics/AI-ML applications.
+3. **`exercises.ipynb`** — fully solved problems in four tiers: **L0** concept checks → **L1** foundations → **L2** AI/ML and physics applications → **L3** challenge proofs, each with a complete derivation and a boxed final answer.
 
 ---
 
