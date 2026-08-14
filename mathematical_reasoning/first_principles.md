@@ -514,7 +514,7 @@ George Polya's *How to Solve It* (1945) proposes a four-step method:
 
 **Example:** In the equation $v = v_0 + at$:
 
-$$[v] = \frac{L}{T}, \quad [v_0] = \frac{L}{T}, \quad [a] \cdot [t] = \frac{L}{T^2} \cdot T = \frac{L}{T} \quad ✓$$
+$$[v] = \frac{L}{T}, \quad [v_0] = \frac{L}{T}, \quad [a] \cdot [t] = \frac{L}{T^2} \cdot T = \frac{L}{T} \quad \checkmark$$
 
 **Application to modeling:** If your model predicts population growth, the growth rate $r$ must have units of $[\text{time}]^{-1}$. If $r$ is given in $\text{year}^{-1}$ but $t$ is in days, the model will give wrong answers.
 
