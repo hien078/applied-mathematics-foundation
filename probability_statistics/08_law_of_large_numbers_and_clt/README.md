@@ -20,7 +20,12 @@ Practically, these theorems are the license behind Monte Carlo integration ($O(n
 - **Mechanism**: Concentration comes from variance shrinkage, $\operatorname{Var}(\bar{X}_n) = \sigma^2/n$, combined with Chebyshev's inequality; universality comes from the second-order Taylor expansion of the characteristic function, in which only mean and variance survive the $n \to \infty$ limit.
 - **Cost Law**: Monte Carlo error decays as $\sigma/\sqrt{n}$ — to gain one digit of accuracy you must multiply the sample size by 100.
 
-## 3. Mermaid Concept Map
+## 3. Prerequisites and Downstream
+
+- **Prerequisites**: [`../06_expectation_variance_and_moments/`](../06_expectation_variance_and_moments/) (Markov and Chebyshev inequalities, moment generating functions); [`../05_continuous_distributions/`](../05_continuous_distributions/) (the Gaussian density used as the CLT's limit law).
+- **Downstream**: [`../09_maximum_likelihood_and_map_estimation/`](../09_maximum_likelihood_and_map_estimation/) (asymptotic normality of the MLE is a direct application of the delta method and the CLT proved here).
+
+## 4. Mermaid Concept Map
 
 ```mermaid
 graph TD
@@ -44,7 +49,7 @@ graph TD
     A --> S["Heavy Tails: Stable Laws"]
 ```
 
-## 4. Common Misconceptions
+## 5. Common Misconceptions
 
 | Misconception | Mathematical Reality | Correct Mental Model |
 |---|---|---|
@@ -56,15 +61,15 @@ graph TD
 | *"More Monte Carlo samples give linearly better accuracy."* | Standard error is $\sigma/\sqrt{n}$, so error halves only when $n$ quadruples. | Buy accuracy with variance reduction (control variates, antithetics, QMC), not brute-force $n$. |
 | *"The sample variance can be plugged into the CLT for free."* | Replacing $\sigma$ by $S_n$ requires Slutsky's theorem; for small $n$ under normality the exact law is Student-$t$, not standard normal. | Studentization is justified asymptotically; small samples need the $t$ correction. |
 
-## 5. Directory Inventory
+## 6. Directory Inventory
 
 | File | Description |
 |---|---|
 | [`README.md`](README.md) | Master overview, first-principles framework, concept map, misconceptions, references. |
-| [`first_principles.ipynb`](first_principles.ipynb) | Markdown-only theory notebook: modes of convergence, Markov/Chebyshev, weak and strong LLN, characteristic-function proof of the CLT, Berry–Esseen, delta method, Monte Carlo and SGD applications. |
-| [`exercises.ipynb`](exercises.ipynb) | 20 fully solved problems in 4 levels: Concept Check (4), Foundation (6), Applications in AI/ML & Physics (6), Challenge (4). |
+| [`first_principles.ipynb`](first_principles.ipynb) | Theory notebook with numerical verification: modes of convergence, Markov/Chebyshev, weak and strong LLN, characteristic-function proof of the CLT, Berry–Esseen, delta method, Monte Carlo and SGD applications, plus code cells checking the LLN/CLT convergence and the exercises' reference values. |
+| [`exercises.ipynb`](exercises.ipynb) | 20 fully solved problems in 4 tiers: L0 Concept Checks (4), L1 Foundations (6), L2 Applications in AI/ML & Physics (6), L3 Challenge Proofs (4). |
 
-## 6. References
+## 7. References
 
 - **Blitzstein, J. K., & Hwang, J.** *Introduction to Probability*, 2nd ed. (Chapter 10: Inequalities and Limit Theorems).
 - **Wasserman, L.** *All of Statistics* (Chapter 5: Convergence of Random Variables).

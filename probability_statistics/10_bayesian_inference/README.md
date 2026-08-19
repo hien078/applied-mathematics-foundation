@@ -11,7 +11,13 @@ The costs are equally clear. The evidence integral is intractable outside specia
 > [!NOTE]
 > A Bayesian credible interval and a frequentist confidence interval answer different questions. A $95\%$ credible interval $C$ satisfies $P(\theta \in C \mid x) = 0.95$ — a probability statement about $\theta$ given the observed data. A confidence interval satisfies $P(\theta \in C(X)) = 0.95$ over hypothetical repetitions with $\theta$ fixed. The two coincide asymptotically but can differ sharply in small samples.
 
-## 2. First-Principles Framework
+## 2. Prerequisites and Downstream Links
+
+- [`../02_conditional_probability_and_bayes/`](../02_conditional_probability_and_bayes/) — Bayes' theorem for events, the conditioning machinery this module lifts to densities.
+- [`../09_maximum_likelihood_and_map_estimation/`](../09_maximum_likelihood_and_map_estimation/) — the MLE $\hat\theta_n$ and Fisher information $I(\theta)$ that the Bernstein–von Mises theorem and Jeffreys' prior both depend on.
+- Downstream: information-theoretic model comparison in [`../../information_theory/04_kl_divergence_and_f_divergences/`](../../information_theory/04_kl_divergence_and_f_divergences/), which the ELBO and Bayes factors both build on.
+
+## 3. First-Principles Framework
 
 - **Phenomenon**: Decisions must be made from limited, noisy data while prior structural knowledge (physics, past experiments, plausible ranges) is available and should not be thrown away.
 - **Goal**: Represent all uncertainty about unknowns as a probability distribution, update it coherently as evidence arrives, and propagate it into predictions and decisions.
@@ -20,7 +26,15 @@ The costs are equally clear. The evidence integral is intractable outside specia
 - **Sequential Structure**: $p(\theta \mid x_{1:n}) \propto p(x_n \mid \theta)\,p(\theta \mid x_{1:n-1})$, so batch and online updating agree exactly.
 - **Decision Rule**: choose $a$ minimizing posterior expected loss $\int L(\theta, a)\,p(\theta \mid x)\,d\theta$; squared loss gives the posterior mean, absolute loss the median, $0$–$1$ loss the mode.
 
-## 3. Mermaid Concept Map
+## 4. Learning Outcomes
+
+- State and derive Bayes' theorem for densities, including the coherence argument for why the update rule is forced.
+- Derive the four workhorse conjugate posteriors (Beta–Binomial, Normal–Normal, Gamma–Poisson, Dirichlet–Categorical) from the likelihood-times-prior kernel.
+- Choose a Bayes estimator (mean, median, mode, or quantile) from a stated loss function and prove it is optimal.
+- State the Bernstein–von Mises theorem, prove its key steps, and name the regimes where it fails.
+- Compare conjugacy, Laplace approximation, MCMC, and variational inference by cost and exactness, and read MCMC diagnostics ($\hat R$, effective sample size).
+
+## 5. Mermaid Concept Map
 
 ```mermaid
 graph TD
@@ -46,7 +60,29 @@ graph TD
 
 ```
 
-## 4. Common Misconceptions
+## 6. Notation
+
+| Symbol | Meaning |
+|---|---|
+| $p(\theta)$ | Prior density over the parameter $\theta$ |
+| $p(x \mid \theta)$ | Likelihood: density of data $x$ given $\theta$ |
+| $p(\theta \mid x)$ | Posterior density over $\theta$ given data $x$ |
+| $p(x)$ | Marginal likelihood / evidence, $\int p(x\mid\theta)p(\theta)\,d\theta$ |
+| $\text{BF}_{12}$ | Bayes factor, $p(x\mid M_1)/p(x\mid M_2)$ |
+| $\mathcal{L}(q)$ | Evidence lower bound (ELBO) for approximating density $q$ |
+| $\chi, \nu$ | Exponential-family conjugate-prior hyperparameters (pseudo-sufficient-statistic, pseudo-count) |
+
+## 7. Core Results
+
+| Result | Statement |
+|---|---|
+| Bayes' theorem | $p(\theta\mid x) = p(x\mid\theta)p(\theta)/p(x)$ |
+| Conjugate update | $(\chi,\nu)\mapsto(\chi+\sum_i T(x_i),\ \nu+n)$ for an exponential-family likelihood |
+| Bayes estimators | Posterior mean / median / mode minimize squared / absolute / $0$–$1$ loss |
+| Bernstein–von Mises | $p(\theta\mid x_{1:n}) \to \mathcal{N}(\hat\theta_n, [nI(\theta_0)]^{-1})$ in total variation |
+| ELBO identity | $\ln p(x) = \mathcal{L}(q) + D_{\text{KL}}(q\,\Vert\,p(\theta\mid x))$ |
+
+## 8. Common Misconceptions
 
 | Misconception | Mathematical Reality | Correct Mental Model |
 |---|---|---|
@@ -58,15 +94,24 @@ graph TD
 | *"More data makes the prior matter more because it keeps multiplying in."* | The prior enters exactly once; the log-likelihood grows like $n$ while $\ln p(\theta)$ stays $O(1)$. | Bernstein–von Mises: the posterior forgets the prior at rate $O(1/n)$. |
 | *"Bayes factors are just likelihood ratios."* | A Bayes factor compares *marginal* likelihoods, which integrate over parameters and therefore penalize model flexibility automatically (Occam's razor). | $\text{BF} = p(x \mid M_1)/p(x \mid M_2)$ with each term an integral, not a maximum. |
 
-## 5. Directory Inventory
+## 9. Directory Inventory
 
 | File | Description |
 |---|---|
-| [`README.md`](README.md) | Master overview, first-principles framework, concept map, misconceptions, references. |
-| [`first_principles.ipynb`](first_principles.ipynb) | Markdown-only theory notebook: Bayes' theorem for densities, conjugate families with full derivations, posterior predictive, decision theory, Bernstein–von Mises, MCMC and variational inference, hierarchical models. |
-| [`exercises.ipynb`](exercises.ipynb) | 20 fully solved problems in 4 levels: Concept Check (4), Foundation (6), Applications in AI/ML & Physics (6), Challenge (4). |
+| [`README.md`](README.md) | Master overview, first-principles framework, concept map, notation, core results, misconceptions, exercise index, references. |
+| [`first_principles.ipynb`](first_principles.ipynb) | Theory notebook: Bayes' theorem for densities, conjugate families and Gibbs sampling with full derivations, hierarchical-model shrinkage, decision theory, Bernstein–von Mises, MCMC/variational inference, and code cells verifying the conjugate update, the shrinkage factor, and MCMC convergence. |
+| [`exercises.ipynb`](exercises.ipynb) | 20 fully solved problems in 4 tiers: L0 Concept Checks (4), L1 Foundations (6), L2 Applications in AI/ML and Physics (6), L3 Challenge Proofs (4). |
 
-## 6. References
+## 10. Exercise Index
+
+| Tier | Count | Problems |
+|---|---:|---|
+| L0 — Concept Checks | 4 | Base-rate screening test, credible vs. confidence intervals, flat priors, batch-equals-stream updating |
+| L1 — Foundations | 6 | Beta–Binomial analysis, Normal–Normal combination, Gamma–Poisson rare events, Dirichlet–Categorical smoothing, posterior-predictive width, loss-driven estimator choice |
+| L2 — Applications (AI/ML and Physics) | 6 | Thompson sampling, Bayesian linear regression, Kalman update, Bayesian A/B testing, hierarchical shrinkage, the VAE objective |
+| L3 — Challenge Proofs | 4 | Bayes factors and Lindley's paradox, Jeffreys' prior invariance, Bernstein–von Mises limits, Metropolis–Hastings correctness |
+
+## 11. References
 
 - **Gelman, A., Carlin, J., Stern, H., Dunson, D., Vehtari, A., & Rubin, D.** *Bayesian Data Analysis*, 3rd ed. (Chapters 1–5: single-parameter models, conjugacy, hierarchical models).
 - **Wasserman, L.** *All of Statistics* (Chapter 11: Bayesian Inference).
