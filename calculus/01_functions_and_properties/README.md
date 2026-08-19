@@ -81,8 +81,8 @@ flowchart TD
 ```text
 foundations/calculus/01_functions_and_properties/
 ├── README.md               <-- Executive Summary, Concept Map, Misconceptions & References (This File)
-├── first_principles.md           <-- First-Principles Theory, Definitions, Theorems, Proofs & Applications
-└── exercises.md            <-- 4-Level Exercise Package (40 Fully Solved Problems + Solutions Manual)
+├── first_principles.ipynb        <-- First-Principles Theory, Definitions, Theorems, Proofs & Applications
+└── exercises.ipynb         <-- 4-Level Exercise Package (40 Fully Solved Problems + Solutions Manual)
 ```
 
 ---

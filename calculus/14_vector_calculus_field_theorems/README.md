@@ -85,10 +85,10 @@ flowchart TD
 ## 📂 Directory Inventory
 
 ```text
-foundations/calculus/14_vector_calculus_field_theorems/
-├── README.md         <-- Overview, Concept Map, Misconceptions & References (This File)
-├── first_principles.md     <-- Complete First-Principles Theory, Proofs, Physics & AI Applications
-└── exercises.md      <-- 40-Problem 4-Level Exercise Package (L0–L3) + Full Solutions
+calculus/14_vector_calculus_field_theorems/
+├── README.md               <-- Overview, Concept Map, Misconceptions & References (This File)
+├── first_principles.ipynb  <-- Complete First-Principles Theory, Proofs, Physics & AI Applications
+└── exercises.ipynb         <-- 40-Problem 4-Level Exercise Package (L0–L3) + Full Solutions
 ```
 
 ---

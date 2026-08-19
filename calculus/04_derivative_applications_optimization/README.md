@@ -64,10 +64,10 @@ flowchart TD
 ## 📂 Directory Inventory
 
 ```text
-foundations/calculus/04_derivative_applications_optimization/
-├── README.md         <-- Executive summary, concept map, misconception table, reference bibliography (This File)
-├── first_principles.md     <-- Complete first-principles theory, rigorous proofs, derivations & applications
-└── exercises.md      <-- 40-problem 4-level exercise package (L0-L3) with full KaTeX step-by-step solutions
+calculus/04_derivative_applications_optimization/
+├── README.md               <-- Executive summary, concept map, misconception table, reference bibliography (This File)
+├── first_principles.ipynb  <-- Complete first-principles theory, rigorous proofs, derivations & numerical verification
+└── exercises.ipynb         <-- 40-problem 4-level exercise package (L0-L3) with full KaTeX step-by-step solutions
 ```
 
 ---

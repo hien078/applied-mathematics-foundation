@@ -47,10 +47,10 @@ flowchart TD
 ## Directory Inventory
 
 ```text
-foundations/calculus/10_multivariable_functions_partials/
-├── README.md        # Overview, Concept Map, Misconceptions, & References (This File)
-├── first_principles.md    # First-Principles Theory, Rigorous Proofs, Algorithmic & Physical Applications
-└── exercises.md     # 4-Level Exercise Package (40 Fully Solved Problems with Boxed Answers & Takeaways)
+calculus/10_multivariable_functions_partials/
+├── README.md               # Overview, Concept Map, Misconceptions, & References (This File)
+├── first_principles.ipynb  # First-Principles Theory, Rigorous Proofs, Algorithmic & Physical Applications
+└── exercises.ipynb         # 4-Tier Exercise Package (40 Fully Solved Problems with Boxed Answers & Takeaways)
 ```
 
 ---

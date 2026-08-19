@@ -39,10 +39,10 @@ By completing this module, you will be able to:
 ## 📂 Module Structure
 
 ```text
-foundations/calculus/05_indefinite_and_definite_integrals/
-├── README.md       <-- Module Overview & Index (This File)
-├── first_principles.md   <-- First-Principles Theory, Proofs, Derivations, Quadrature & AI Applications
-└── exercises.md    <-- 4-Level Exercise Package (40 Problems with Full Solutions & Takeaways)
+calculus/05_indefinite_and_definite_integrals/
+├── README.md               <-- Module Overview & Index (This File)
+├── first_principles.ipynb  <-- First-Principles Theory, Proofs, Derivations, Quadrature & AI Applications
+└── exercises.ipynb         <-- 4-Level Exercise Package (40 Problems with Full Solutions & Takeaways)
 ```
 
 ---

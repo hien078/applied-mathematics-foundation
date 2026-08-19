@@ -1,97 +1,202 @@
-# Topic 03: Linear Systems and Direct Factorizations
+# Module 03 — Linear Systems and Direct Factorizations
 
-## Master Overview
+Almost every quantitative model ends at the same line of code: solve $Ax = b$. Regression,
+Newton steps, Kalman updates, finite-element stress, Gaussian-process inference and graph
+diffusion all reduce to it.
 
-Solving the linear system $Ax = b$ is the fundamental problem of numerical linear algebra. This topic explores the theoretical conditions for solvability (the Fundamental Theorem of Linear Algebra and Rouché-Capelli), the geometric meaning of the four fundamental subspaces, and the primary algorithmic methods for direct solution (LU, PLU, Cholesky, and $LDL^T$ factorizations). By understanding matrix factorizations, we shift from abstract equation-solving to structured data decomposition, a perspective crucial for modern machine learning, optimization, and scientific computing.
+Two questions come before any arithmetic. Does a solution exist, and is it unique? Both are
+settled by comparing the rank of $A$ with the rank of the augmented matrix $[A \mid b]$, and the
+answer describes the whole solution set at once: a particular solution plus the null space.
 
-## First-Principles Framework
+The second half of the module is about *how*. Gaussian elimination is not a procedure to be
+memorized; it is a **factorization**. Writing $A$ as a product of triangular matrices turns one
+$O(n^3)$ investment into $O(n^2)$ per right-hand side, and the factors themselves carry the
+determinant, the inertia and the definiteness of $A$.
 
-The journey from physical observation to computational solve and AI application:
+The last third separates two ideas that are constantly confused. **Conditioning** is a property
+of the problem and bounds what any algorithm can achieve; **stability** is a property of the
+algorithm. A well-conditioned system solved by an unstable method is still wrong, and this
+module exhibits exactly such a case in code.
 
-1. **Phenomenon**: Interacting linear equations and systems of physical/data balances where observed outcomes are linear combinations of unknown variables.
+> [!NOTE]
+> **Factorization theorems.** For nonsingular $A$, the factorization $A = LU$ with $L$ unit
+> lower triangular exists and is unique **if and only if** every leading principal submatrix
+> $A_1, \dots, A_{n-1}$ is nonsingular. Row permutation removes the exception: $PA = LU$ exists
+> for every square $A$, and partial pivoting forces $\lvert l_{ij} \rvert \le 1$. For symmetric
+> $A$, positive definiteness is **equivalent** to the existence of $A = LL^\top$ with
+> $l_{ii} \gt 0$.
 
-2. **Goal**: Solve $Ax = b$ efficiently and stably for $x \in \mathbb{R}^n$, or factor $A$ into simpler structural matrices (triangular, diagonal, or permutation).
+## Prerequisites and downstream modules
 
-3. **Assumptions**: Linearity holds; coefficients $A$ are static; calculations use floating-point arithmetic requiring numerical pivoting.
+**Prerequisites.**
 
-4. **Variables & Parameters**: System matrix $A \in \mathbb{R}^{m \times n}$, state vector $x \in \mathbb{R}^n$, target vector $b \in \mathbb{R}^m$, factor matrices $L, U, P, D$.
+- [Module 02 — Linear Maps and Matrix Transformations](../02_linear_maps_and_matrix_transformations/) — matrices as linear maps, rank, kernel and image, and the rank factorization $A = CR$.
 
-5. **Governing Principles**: **Decomposition** (reducing dense operations to triangular solves) and **Orthogonal Complementarity** ($\text{N}(A) = \text{C}(A^T)^\perp$).
+**Downstream modules unlocked by this one.**
 
-6. **Mathematical Formulation**: $Ax = b$, $PA = LU$, $A = LL^T$, and $A = LDL^T$.
+- [Module 04 — Orthogonality, Projections and QR](../04_orthogonality_projections_and_qr/)
+- [optimization/04 — Line Search, Newton and Quasi-Newton](../../optimization/04_line_search_newton_quasi_newton/)
+- [numerical_methods/04 — Polynomial and Spline Interpolation](../../numerical_methods/04_polynomial_and_spline_interpolation/)
 
-7. **Computation**: Triangular forward/backward substitution ($O(n^2)$) following elimination ($O(n^3)$).
+The full dependency graph is in [docs/prerequisites.md](../../docs/prerequisites.md), and the
+symbol conventions used below are fixed in [docs/notation.md](../../docs/notation.md).
 
-8. **Verification**: Residual check $\|b - Ax\| / \|b\| \approx \epsilon_{\text{mach}}$, condition number $\kappa(A) = \|A\|\|A^{-1}\|$, Sylvester's criterion for SPD matrices.
+## Learning outcomes
 
-9. **Real-World Application**: Finite element analysis (FEA) stiffness solves, electric circuit analysis, structural stress modeling.
+After working through this module you will be able to:
 
-10. **AI Connection**: Gaussian process inference (Cholesky of kernel matrices), second-order optimization (Hessian solves $H \Delta \theta = -g$), block matrix inversion via Schur complement in neural network architectures.
+- decide whether $Ax = b$ is solvable from a rank comparison, and write the complete solution set as $x_p + \operatorname{Null}(A)$;
+- prove that row rank equals column rank, and use it to close the dimension count of the four fundamental subspaces;
+- compute an LU, PLU, Cholesky or $LDL^\top$ factorization of a small matrix by hand, showing the multipliers and pivots;
+- state and prove both directions of the LU existence-and-uniqueness theorem, and name the matrix that breaks it;
+- decide positive definiteness from the pivots, from the Cholesky factor, or from Sylvester's criterion, and read the inertia off $D$;
+- form a Schur complement, use it for block elimination, block inversion, determinants and Gaussian conditioning;
+- apply Sherman-Morrison-Woodbury to update an inverse after a low-rank change in $O(n^2)$;
+- separate conditioning from stability: bound the forward error by $\kappa(A)$ times the data error, and compute the backward error exactly as $\lVert r \rVert_2 / \lVert \hat{x} \rVert_2$;
+- explain why partial pivoting is used despite a $2^{n-1}$ worst-case growth factor, and exhibit the matrix that attains it.
 
-## Mermaid Concept Map
+## Concept map
 
 ```mermaid
 graph TD
-    A["Linear System Ax = b"] --> B("Existence & Uniqueness")
-    A --> C("Direct Factorizations")
-    
-    B --> D["Fundamental Subspaces"]
-    B --> E["Rouché-Capelli Theorem"]
-    D --> F["Nullspace N(A)"]
-    D --> G["Column Space C(A)"]
-    D --> H["Row Space C(Aᵀ)"]
-    D --> I["Left Nullspace N(Aᵀ)"]
-    
-    C --> J["LU Factorization"]
-    C --> K["Cholesky A = LLᵀ"]
-    
-    J --> L("Partial Pivoting PLU")
-    K --> M("Positive Definite Matrices")
-    K --> N("LDLᵀ Factorization")
-    
-    C --> O["Block Matrices & Schur Complement"]
-
-    style A fill:#e1f5fe,stroke:#01579b
-    style C fill:#e8f5e9,stroke:#2e7d32
-    style K fill:#fff3e0,stroke:#ef6c00
+    A["Linear system A x = b"] --> B["Solvability: rank(A) = rank(A|b)"]
+    B --> C["Solution set x_p + Null(A)"]
+    A --> D["Gaussian elimination"]
+    D --> E["A = L U, unique iff every A_k nonsingular"]
+    E --> F["Zero or tiny pivot"]
+    F --> G["Partial pivoting: P A = L U, multipliers at most 1"]
+    D --> H["Symmetric case"]
+    H --> I["A = L D L transpose, pivots d_i"]
+    I --> J["All d_i positive iff A is positive definite"]
+    J --> K["Cholesky A = L L transpose, one third n cubed flops"]
+    I --> L["Inertia and Sylvester criterion"]
+    D --> M["Block elimination"]
+    M --> N["Schur complement S = D - C A inverse B"]
+    N --> O["det M = det A det S"]
+    N --> P["Gaussian conditioning, block inversion"]
+    M --> Q["Sherman-Morrison-Woodbury low-rank update"]
+    A --> R["Conditioning kappa(A)"]
+    R --> S["Forward error at most kappa times data error"]
+    G --> T["Growth factor rho, backward error c n cubed rho u"]
+    T --> U["Stability is the algorithm, conditioning is the problem"]
+    S --> U
+    K --> V["Gaussian processes, Newton steps, Poisson solves"]
 ```
 
-## Core Pillars Table
+## Notation
 
-| Concept | Mathematical Meaning | Computational Implication | AI & ML Connection |
-| :--- | :--- | :--- | :--- |
-| **Solvability** | $b \in \text{C}(A)$ | Determines if exact solution exists or least-squares is needed. | Basis for linear regression and feature representation. |
-| **Four Subspaces** | $\text{N}(A) = \text{C}(A^T)^\perp$ | Defines the structure of solutions and transformations. | SVD, dimensionality reduction, feature extraction. |
-| **LU Factorization** | $A = LU$ | Solves $Ax = b$ in $\approx \frac{2}{3}n^3$ flops via triangular solves. | Forward/backward passes in simple networks, preconditioning. |
-| **PLU Factorization** | $PA = LU$ | Ensures numerical stability via partial pivoting. | Robust numerical routines in deep learning libraries. |
-| **Cholesky** | $A = LL^T$ | Exploits symmetry & positive definiteness in $\approx \frac{1}{3}n^3$ flops. | Gaussian processes, Kalman filters, Hessian approximations. |
-| **Schur Complement** | $S = D - CA^{-1}B$ | Arises in block matrix inversion and elimination. | Gaussian conditioning, graph neural network propagation. |
+Drawn from [docs/notation.md](../../docs/notation.md).
 
-## Common Misconceptions
+| Symbol | Meaning | Convention |
+|---|---|---|
+| $A \in \mathbb{R}^{m \times n}$ | system matrix | $m$ rows, $n$ columns |
+| $\operatorname{Col}(A)$, $\operatorname{Null}(A)$, $\operatorname{Row}(A)$ | column, null and row space | `\operatorname` |
+| $r = \operatorname{rank}(A)$ | rank | $\dim \operatorname{Col}(A) = \dim \operatorname{Col}(A^\top)$ |
+| $A_k$ | leading principal submatrix | top-left $k \times k$ block |
+| $A = LU$, $PA = LU$ | LU and PLU factorizations | $L$ unit lower triangular |
+| $A = LL^\top$ | Cholesky factorization | $l_{ii} \gt 0$ |
+| $A = LDL^\top$ | symmetric factorization | $L$ unit lower triangular, $D$ diagonal |
+| $S = D - CA^{-1}B$ | Schur complement of $A$ in $M$ | |
+| $\lVert x \rVert$, $\lVert A \rVert_\infty$, $\lVert A \rVert_F$ | norms | `\lVert`, never a bare pipe |
+| $\kappa(A) = \lVert A \rVert \, \lVert A^{-1} \rVert$ | condition number | subscript names the norm |
+| $\varepsilon_{\mathrm{mach}} = 2^{-52}$, $u = 2^{-53}$ | machine epsilon, unit roundoff | $u = \tfrac12 \varepsilon_{\mathrm{mach}}$ |
+| $\gamma_k = ku/(1-ku)$ | Wilkinson's rounding accumulator | |
+| $\rho$ | growth factor of elimination | Definition 3.7 |
+| $(n_+, n_-, n_0)$ | inertia of a symmetric matrix | positive, negative, zero eigenvalues |
 
-1. **Misconception:** $Ax = b$ should be solved by computing $A^{-1}b$.
-   
-   *Correction:* Computing $A^{-1}$ explicitly is numerically unstable and computationally wasteful ($\frac{8}{3}n^3$ flops via LU inversion or $2n^3$ via Gauss-Jordan vs $\frac{2}{3}n^3$ for direct LU solve). We factor $A = LU$ and solve two triangular systems instead.
+## Core results
 
-2. **Misconception:** The left nullspace $\text{N}(A^T)$ is the same as the nullspace $\text{N}(A)$.
-   
-   *Correction:* They exist in different spaces. $\text{N}(A) \subseteq \mathbb{R}^n$ while $\text{N}(A^T) \subseteq \mathbb{R}^m$.
+| Result | Statement | Hypotheses | Where |
+|---|---|---|---|
+| Row rank equals column rank | $\dim \operatorname{Col}(A) = \dim \operatorname{Col}(A^\top)$ | none | Proposition 4.1, Proof 5.1 |
+| Rouché-Capelli | solvable iff $\operatorname{rank}(A) = \operatorname{rank}([A \mid b])$; solution set $x_p + \operatorname{Null}(A)$ | none | Theorem 4.2, Proof 5.2 |
+| Four fundamental subspaces | $\operatorname{Null}(A) = \operatorname{Col}(A^\top)^{\perp}$ | real entries | Theorem 4.3, Proof 5.3 |
+| LU existence and uniqueness | $A = LU$ iff every $A_k$, $k \le n-1$, is nonsingular | $A$ nonsingular | Theorem 4.4, Proof 5.4 |
+| PLU always exists | $PA = LU$ with $\lvert l_{ij} \rvert \le 1$ | none | Theorem 4.5, Proof 5.5 |
+| Cholesky | $A = LL^\top$, $l_{ii} \gt 0$, iff $A \succ 0$ | $A$ symmetric | Theorem 4.6, Proof 5.6 |
+| Positive pivots and Sylvester | $A \succ 0$ iff all $d_i \gt 0$ iff all $\det A_k \gt 0$ | $A$ symmetric | Theorem 4.7, Proof 5.7 |
+| Schur complement | block LDU; $\det M = \det A \det S$; $M \succ 0 \Rightarrow S \succ 0$ | $A$ nonsingular | Theorem 4.8, Proof 5.8 |
+| Sherman-Morrison-Woodbury | $(A + UCV)^{-1} = A^{-1} - A^{-1}U(C^{-1} + VA^{-1}U)^{-1}VA^{-1}$ | inner matrix nonsingular | Theorem 4.9, Proof 5.9 |
+| Perturbation bound | relative forward error at most $\kappa(A)$ times relative data error | $\lVert A^{-1} \rVert \lVert \delta A \rVert \lt 1$ | Theorem 4.10, Proof 5.10 |
+| Backward error identity | $\min \lVert \delta A \rVert_2 = \lVert r \rVert_2 / \lVert \hat{x} \rVert_2$ | $\hat{x} \neq 0$ | Theorem 4.11, Proof 5.11 |
+| Wilkinson's GEPP bound | $\lVert \delta A \rVert_\infty \le c\,n^3 \rho\, u \lVert A \rVert_\infty$ | cited; the $n^2$ step is proved | Theorem 4.12, Proof 5.12 |
 
-3. **Misconception:** Any symmetric matrix has a Cholesky factorization.
-   
-   *Correction:* The matrix must be Symmetric Positive Definite (SPD). If it is only indefinite symmetric, $LDL^T$ with pivoting or other methods are required.
+## Common misconceptions
 
-4. **Misconception:** Pivoting is only needed when a diagonal element is exactly zero.
-   
-   *Correction:* Pivoting is required for numerical stability when a pivot is very small (not just zero) to avoid catastrophic cancellation and round-off amplification.
+1. **"Solve $Ax = b$ by computing $A^{-1}b$."** Explicit inversion costs about $2n^3$ flops
+   against $\tfrac23 n^3$ for an LU factorization plus $2n^2$ for the two triangular solves, and
+   it is less accurate. Cramer's rule is worse still: $n+1$ determinants, so $O(n^4)$ even with
+   a fast determinant.
 
-## Literature References
+2. **"$\operatorname{Null}(A^\top)$ is $\operatorname{Null}(A)$."** They live in different
+   spaces: $\operatorname{Null}(A) \subseteq \mathbb{R}^n$ and
+   $\operatorname{Null}(A^\top) \subseteq \mathbb{R}^m$, with dimensions $n-r$ and $m-r$.
 
-- **Strang, G.** *Introduction to Linear Algebra* (5th ed., Ch. 2-3). Intuition for solving systems, Gauss elimination, and the four fundamental subspaces.
+3. **"Every symmetric matrix has a Cholesky factorization."** Only positive definite ones. For
+   $\left[\begin{smallmatrix}1 & 2 \\ 2 & 3\end{smallmatrix}\right]$ the second radicand is
+   $3 - 4 = -1$.
 
-- **Golub, G. H., & Van Loan, C. F.** *Matrix Computations* (4th ed., Ch. 3). Rigorous treatment of LU, Cholesky, pivoting, and stability analysis.
+4. **"Every symmetric matrix has an $LDL^\top$ with $D$ diagonal."** It does not.
+   $\left[\begin{smallmatrix}0 & 1 \\ 1 & 0\end{smallmatrix}\right]$ has none, because $d_1 = 0$
+   makes $l_{21}d_1 = 1$ unsolvable. The general case needs Bunch-Kaufman's $2 \times 2$ blocks.
 
-- **Trefethen, L. N., & Bau, D.** *Numerical Linear Algebra* (Lectures 20-23). Geometric insights into Gaussian elimination and conditioning.
+5. **"Pivoting only matters when a pivot is exactly zero."** A tiny pivot is worse, because it
+   is silent. Section 7.3 of the theory notebook solves a system with
+   $\kappa_\infty(A) \approx 4$ and gets $x_1 = 0$ instead of $x_1 = 1$ without pivoting, and
+   the exact answer with it.
 
-- **Boyd, S., & Vandenberghe, L.** *Applied Linear Algebra* (Ch. 11). Practical implications of direct factorizations in optimization.
+6. **"A small residual means an accurate answer."** It means a small *backward* error. By
+   Theorem 4.11 the smallest perturbation making $\hat{x}$ exact has norm
+   $\lVert r \rVert_2/\lVert \hat{x} \rVert_2$; converting that into forward error costs a
+   factor $\kappa(A)$.
 
+7. **"$\kappa(A) \approx 10^k$ means every algorithm loses about $k$ digits."** It means a
+   **backward-stable** algorithm loses about $k$ digits, and that this is the best possible. An
+   unstable algorithm is not covered by the rule and can lose everything.
+
+8. **"Householder QR is unconditionally stable, so it always gives the right answer."** It is
+   unconditionally *backward* stable. The forward error is still $O(\kappa(A)u)$, exactly as for
+   LU.
+
+9. **"Gaussian elimination with partial pivoting is proved stable."** The proved bound is
+   $c\,n^3 \rho u$ with $\rho \le 2^{n-1}$, and the Wilkinson matrix attains the exponent.
+   Practice is far better than the worst case, but the worst case is real.
+
+## Exercise index
+
+[`exercises.ipynb`](exercises.ipynb) contains 40 fully solved problems in four tiers. Every
+problem carries a statement, a short intuition, a stepwise solution, a boxed answer, a key
+takeaway, and a code cell that recomputes the answer and prints the check.
+
+| Tier | Count | Coverage |
+|---|---:|---|
+| L0 — Concept Checks | 8 | back and forward substitution, elimination matrices, a $2 \times 2$ solve, permutation matrices, a matrix with no LU, Cholesky breakdown, a kernel Cholesky |
+| L1 — Foundations | 14 | LU of a $3 \times 3$, solving with the factors, $LDU$, one pivoting step, LU and Cholesky flop counts, $LDL^\top$, determinant from LU, triangular inverse, the residual bound, a $3 \times 3$ Cholesky, subspace dimensions, solvability by rank, the complete solution set |
+| L2 — Applications (AI/ML and Physics) | 10 | steady heat conduction and the Thomas algorithm, a resistor network as a Laplacian solve, a near-singular calibration matrix, error amplification, LU against QR, block inversion and Gaussian conditioning, Sherman-Morrison in recursive least squares, Woodbury and the Kalman gain, a rank-one Cholesky update, Gaussian-process posteriors |
+| L3 — Challenge Proofs | 8 | bandwidth preservation, block LU, block triangular inverse, the Schur determinant identity, the $2^{n-1}$ growth bound, uniqueness of LU, the rigorous perturbation theorem, inertia and Sylvester's law |
+
+Tier L2 contains two genuine physics problems: steady heat conduction on a rod solved by the
+Thomas algorithm (Problem L2.1) and a resistor network solved as a grounded Laplacian system
+(Problem L2.2).
+
+## References
+
+**Textbooks.**
+
+- Golub, G. H. and Van Loan, C. F. *Matrix Computations*, 4th ed. — LU existence and uniqueness (Theorem 3.2.1), partial pivoting and the growth factor (section 3.4.1, Theorem 3.4.1), the $8n^3\rho u$ backward-error bound (section 3.4.6), Cholesky (Theorem 4.2.7), banded and tridiagonal factorizations (section 4.3), the Schur complement (section 3.2.10).
+- Trefethen, L. N. and Bau, D. *Numerical Linear Algebra* — Gaussian elimination and LU (Lecture 20), pivoting (Lecture 21), stability of Gaussian elimination and the Wilkinson matrix (Lecture 22), Cholesky (Lecture 23), conditioning and backward stability (Lectures 12 to 15).
+- Higham, N. J. *Accuracy and Stability of Numerical Algorithms*, 2nd ed. — the elementwise Wilkinson bound (Theorem 9.3), the $\lVert \lvert L \rvert \lvert U \rvert \rVert$ estimate (equation 9.14), complete-pivoting growth (section 9.4), the Rigal-Gaches backward-error identity (Theorem 7.1), iterative refinement (Chapter 12).
+- Strang, G. *Linear Algebra and Learning from Data*, sections I.1 to I.4 — the four fundamental subspaces, elimination as factorization, and the $A = CR$ argument.
+- Boyd, S. and Vandenberghe, L. *Introduction to Applied Linear Algebra*, Chapters 8 and 11 — linear systems, factor-solve, and the cost model.
+- Rasmussen, C. E. and Williams, C. K. I. *Gaussian Processes for Machine Learning*, Algorithm 2.1 — the Cholesky implementation used in Section 8.1.
+
+**Papers.**
+
+- Rigal, J. L. and Gaches, J. "On the compatibility of a given solution with the data of a linear system", *Journal of the ACM* **14**(3) (1967), 543-548.
+- Bunch, J. R. and Kaufman, L. "Some stable methods for calculating inertia and solving symmetric linear systems", *Mathematics of Computation* **31** (1977), 163-179.
+- Wilkinson, J. H. "Error analysis of direct methods of matrix inversion", *Journal of the ACM* **8**(3) (1961), 281-330.
+
+**In this directory.**
+
+- [`first_principles.ipynb`](first_principles.ipynb) — theory, proofs, eight worked examples, twelve executable code cells and three figures.
+- [`exercises.ipynb`](exercises.ipynb) — the 40 solved problems indexed above.

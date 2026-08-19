@@ -76,10 +76,10 @@ Phenomenon (Continuous Motion & Indeterminate Forms)
 ## 📁 Directory Inventory
 
 ```text
-foundations/calculus/02_limits_and_continuity/
-├── README.md       <-- Module Overview, Concept Map, Misconceptions & References (This File)
-├── first_principles.md   <-- Rigorous First-Principles Theory, Definitions, Proofs & Applications
-└── exercises.md    <-- 4-Level Exercise Package (40 Fully Solved Problems with Citations)
+calculus/02_limits_and_continuity/
+├── README.md               <-- Module Overview, Concept Map, Misconceptions & References (This File)
+├── first_principles.ipynb  <-- Rigorous First-Principles Theory, Definitions, Proofs & Applications
+└── exercises.ipynb         <-- 4-Tier Exercise Package (57 Fully Solved Problems, L0-L3)
 ```
 
 ---

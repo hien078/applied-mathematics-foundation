@@ -78,8 +78,8 @@ flowchart TD
 ```text
 foundations/calculus/12_hessian_jacobian_curvature/
 ├── README.md         <-- Module Overview, Concept Map, Misconceptions, & References (This File)
-├── first_principles.md     <-- Complete First-Principles Theory, Proofs, Derivations, & Algorithmic Analysis
-└── exercises.md      <-- 4-Level Exercise Package (40 Fully Solved Problems with Boxed Answers & Insights)
+├── first_principles.ipynb  <-- Complete First-Principles Theory, Proofs, Derivations, & Algorithmic Analysis
+└── exercises.ipynb    <-- 4-Level Exercise Package (40 Fully Solved Problems with Boxed Answers & Insights)
 ```
 
 ---

@@ -36,10 +36,10 @@ By completing this module, you will be able to:
 ## 📂 Directory Inventory
 
 ```text
-foundations/calculus/11_gradients_directional_derivatives/
-├── README.md         <-- Module Overview, Concept Map, Misconceptions, & References (This File)
-├── first_principles.md     <-- Complete First-Principles Theory, Proofs, Physics & AI/ML Applications
-└── exercises.md      <-- 4-Level Exercise Package (40 Solved Problems with Boxed Answers & Takeaways)
+calculus/11_gradients_directional_derivatives/
+├── README.md               <-- Module Overview, Concept Map, Misconceptions, & References (This File)
+├── first_principles.ipynb  <-- Complete First-Principles Theory, Proofs, Physics & AI/ML Applications
+└── exercises.ipynb         <-- 4-Level Exercise Package (40 Solved Problems with Boxed Answers & Takeaways)
 ```
 
 ---

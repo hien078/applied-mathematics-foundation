@@ -110,10 +110,10 @@ flowchart TD
 ## 📂 Directory Inventory
 
 ```text
-foundations/calculus/06_integral_applications_geometry_physics/
-├── README.md         <-- Module overview, concept map, misconceptions, inventory (This File)
-├── first_principles.md     <-- Complete theoretical derivations, theorems, physics models, AI connections
-└── exercises.md      <-- 40-problem 4-level exercise package with full step-by-step solutions
+calculus/06_integral_applications_geometry_physics/
+├── README.md               <-- Module overview, concept map, misconceptions, inventory (This File)
+├── first_principles.ipynb  <-- Complete theoretical derivations, theorems, physics models, AI connections
+└── exercises.ipynb         <-- 40-problem 4-level exercise package with full step-by-step solutions
 ```
 
 ---
