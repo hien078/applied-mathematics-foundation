@@ -1,66 +1,156 @@
-# Topic 10: Multivariable Functions & Partial Derivatives — Calculus Mastery Module
+# Module 10 — Multivariable Functions and Partial Derivatives
 
-## Executive Summary & Learning Objectives
+In one variable the derivative is a number, and one number is enough because there is only one
+direction to move in. In $\mathbb{R}^n$ the obvious generalisation — freeze every coordinate but
+one and take the old derivative — produces the partial derivatives. They are easy to compute and,
+on their own, nearly worthless: a function can have every partial derivative at a point and still
+fail to be continuous there.
 
-Multivariable calculus extends single-variable analysis to functions operating on higher-dimensional vector spaces, $f: \mathbb{R}^n \to \mathbb{R}^m$. Moving from $\mathbb{R}$ to $\mathbb{R}^n$ introduces rich topological and geometric structures: directions of approach to a point become infinite, level sets describe hyper-surfaces of constant value, and the concept of derivative transitions from a scalar rate of change to a bounded linear operator (the **Fréchet derivative** or **total differential**).
+The object that actually does the work is a **linear map**: $f$ is differentiable at $a$ when one
+linear $L$ satisfies $f(a+h) = f(a) + Lh + o(\lVert h \rVert)$. That map is unique, it forces
+continuity, its matrix is the Jacobian, and every directional derivative falls out of it. What it
+is not is computable straight from the definition.
 
-This module establishes a rigorous foundation for multivariable functions, limits, continuity, partial derivatives, and differentiability. It bridges classical geometric intuition with the formal functional analysis required in modern mathematical physics and machine learning optimization.
+The bridge between the two is the theorem this module exists to prove: if the partial derivatives
+exist near $a$ and are continuous **at $a$**, then $f$ is differentiable at $a$ and its derivative
+is the Jacobian. One statement about a linear map is converted into $mn$ statements about ordinary
+one-variable derivatives, each of which a first-year calculus student can check.
 
-### Key Learning Objectives
+The rest is the apparatus that makes the derivative usable — the chain rule, the symmetry of
+second derivatives, and the mean value inequality that replaces the mean value theorem once
+$m \ge 2$ — together with an honest catalogue of which converses fail and the counterexample that
+kills each one.
 
-1. **Domain Topology & Level Sets**: Identify, sketch, and mathematically analyze domains $D \subset \mathbb{R}^n$ and level sets $S_c = \{x \in D \mid f(x) = c\}$, understanding their topological properties (open, closed, bounded, compact).
-2. **Multivariable Limits & Continuity**: Rigorously analyze multivariable limits using $\epsilon$-$\delta$ formalisms, polar/spherical coordinate transformations, and path-dependent non-existence criteria.
-3. **Partial Derivatives & Directional Rates**: Compute scalar partial derivatives $\frac{\partial f}{\partial x_i}$ and directional derivatives $D_v f(a)$, establishing their geometric interpretation as cross-sectional slopes.
-4. **Symmetry of Mixed Partials**: Master **Clairaut's (Schwarz's) Theorem**, proving conditions under which $\frac{\partial^2 f}{\partial x_i \partial x_j} = \frac{\partial^2 f}{\partial x_j \partial x_i}$, and analyze classical counterexamples where mixed partials fail to commute.
-5. **Differentiability Hierarchy**: Distinguish clearly between partial derivability, Gâteaux differentiability (directional differentiability), Fréchet differentiability (total differentiability), and $C^1$ continuity, proving containment relationships and structural counterexamples.
-6. **Applications in Physics & AI/ML**: Formulate physical field equations (Heat, Wave, Laplace) and machine learning loss functions, evaluating gradients, Jacobians, and total differentials in optimization landscapes.
+> [!NOTE]
+> **Continuous partials are enough.** If every $\partial_j f_i$ exists on a ball around $a$ and
+> every one of them is continuous at $a$, then $f$ is differentiable at $a$ and $Df(a) = J_f(a)$.
+> The converse is false — differentiability at a point does not make the partials continuous
+> there — so $C^1$ is a sufficient condition, never a necessary one.
 
----
+## Prerequisites
 
-## First-Principles Concept Map
+| Module | What this module takes from it |
+| :--- | :--- |
+| [calculus/02 — Limits and Continuity](../02_limits_and_continuity/) | the $\varepsilon$-$\delta$ discipline, reused verbatim for limits in $\mathbb{R}^n$ |
+| [calculus/03 — Single-Variable Derivatives](../03_single_variable_derivatives/) | the one-variable mean value theorem, applied on each coordinate segment |
+| [linear_algebra/01 — Vectors, Spaces and Subspaces](../../linear_algebra/01_vectors_spaces_and_subspaces/) | linear maps, norms, and the operator norm |
+
+**Downstream.** [calculus/11 — Gradients and Directional Derivatives](../11_gradients_directional_derivatives/)
+reads the derivative of a scalar field as a vector and turns it into a geometry of level sets and
+steepest ascent. The full module graph is in [docs/prerequisites.md](../../docs/prerequisites.md).
+
+## Learning outcomes
+
+- State Definition 3.7 and explain why $f(a+h) = f(a) + Lh + o(\lVert h \rVert)$ is a strictly
+  stronger claim than the existence of $n$ partial derivatives.
+- Decide whether a given limit in $\mathbb{R}^2$ exists, using polar coordinates for a proof and a
+  second path for a disproof, and say why straight lines alone settle nothing.
+- Prove Theorem 4.2 — continuous partials imply differentiability — by telescoping the increment
+  along coordinate directions and applying the one-variable mean value theorem to each piece.
+- Apply the chain rule as matrix multiplication, and identify forward- and reverse-mode automatic
+  differentiation as the two association orders of the same product.
+- State Schwarz's theorem with its exact hypotheses, and produce Peano's function as the
+  counterexample once continuity of the mixed partial is dropped.
+- Place a given function in the hierarchy (P), (A), (F), (C) of Proposition 4.6, and name the
+  counterexample that blocks each false converse.
+- Use the mean value inequality in place of the mean value theorem when $m \ge 2$, and explain why
+  the equality form is unavailable.
+
+## Concept map
 
 ```mermaid
 flowchart TD
-    A["Multivariable Space ℝⁿ & Topology<br/>(Norms, Open/Closed Sets, Domain D)"] --> B["Level Sets / Curves / Surfaces S_c<br/>S_c = { x ∈ D | f(x) = c }"]
-    B --> C["Multivariable Limit & Continuity<br/>lim_{x→a} f(x) = L ⇔ ε-δ Def<br/>(Path-Independence across ALL Curves)"]
-    C --> D["Partial Derivatives<br/>∂f/∂x_i = lim_{h→0} [f(a+he_i)-f(a)]/h<br/>(Scalar Slopes Along Basis Axes)"]
-    D --> E1["Directional Derivative<br/>Gâteaux Derivative<br/>D_v f(a) = lim_{t→0} [f(a+tv)-f(a)]/t"]
-    D --> E2["Higher-Order Partials &<br/>Clairaut/Schwarz Theorem<br/>∂²f/∂x∂y = ∂²f/∂y∂x"]
-    E1 --> F["Fréchet Differentiability & Total Diff.<br/>f(a+h) = f(a) + L(h) + E(h), ||E(h)||/||h|| → 0<br/>Linear Map L represented by Jacobian J_f"]
-    F --> G["Applications: Physics (PDEs) & AI/ML<br/>(Heat/Laplace Equations, Autodiff, Gradients)"]
+    A["Open sets and limits in R^n<br/>Definitions 3.1 to 3.4"] --> B["Partial derivatives<br/>Definition 3.5"]
+    A --> C["Directional derivatives<br/>Definition 3.6"]
+    B --> D["Frechet derivative Df(a)<br/>f(a+h) = f(a) + Lh + o(||h||)<br/>Definition 3.7"]
+    C --> D
+    D --> E["Theorem 4.1<br/>L unique, f continuous,<br/>L = J_f(a)"]
+    B --> F["Theorem 4.2<br/>continuous partials<br/>=> differentiable"]
+    F --> D
+    D --> G["Theorem 4.3<br/>chain rule<br/>J_gf = J_g J_f"]
+    B --> H["Theorem 4.4<br/>Schwarz: mixed partials<br/>commute"]
+    D --> I["Theorem 4.5<br/>mean value inequality<br/>no equality for m >= 2"]
+    E --> J["Proposition 4.6<br/>the hierarchy is strict<br/>four counterexamples"]
+    I --> K["Proposition 4.8<br/>invertible Df<br/>=> local injectivity"]
+    K --> L["Theorem 4.7 (cited)<br/>inverse function theorem"]
+    G --> M["Applications<br/>backpropagation, PDEs,<br/>Maxwell relations"]
+    H --> M
 ```
 
----
+## Notation
 
-## Common Misconceptions Table
+Drawn from [docs/notation.md](../../docs/notation.md); nothing here departs from the register.
 
-| Misconception | Reality & Mathematical Truth | Counterexample / Correct Principle |
+| Symbol | Meaning | Convention |
 | :--- | :--- | :--- |
-| **"If partial derivatives $\frac{\partial f}{\partial x}$ and $\frac{\partial f}{\partial y}$ exist everywhere, $f$ must be continuous."** | **False.** Partial derivatives only restrict behavior along coordinate axes. A function can be discontinuous at $(0,0)$ even if both partial derivatives exist everywhere. | $f(x,y) = \frac{xy}{x^2+y^2}$ for $(x,y)\neq(0,0)$, $f(0,0)=0$. Partials at $(0,0)$ are both $0$, but $\lim_{(x,y)\to(0,0)} f(x,y)$ does not exist ($f=1/2$ along $y=x$). |
-| **"If $\lim_{(x,y)\to(0,0)} f(x,y) = L$ along every straight line $y = kx$, the multivariable limit is $L$."** | **False.** Approaching along straight lines is insufficient. A limit must evaluate to $L$ along *all possible paths*, including parabolic, exponential, or oscillatory curves. | $f(x,y) = \frac{x^2 y}{x^4 + y^2}$. Along $y = kx$, $\lim_{x\to 0} \frac{k x^3}{x^4 + k^2 x^2} = 0$. But along $y = x^2$, $f(x,x^2) = \frac{x^4}{2 x^4} = \frac{1}{2} \neq 0$. |
-| **"Mixed partial derivatives always commute ($\frac{\partial^2 f}{\partial x \partial y} = \frac{\partial^2 f}{\partial y \partial x}$)."** | **False.** Equality requires continuity of the second partial derivatives at the target point (Clairaut's / Schwarz's Theorem). | Peano's counterexample: $f(x,y) = \frac{xy(x^2-y^2)}{x^2+y^2}$ for $(x,y)\neq(0,0)$ and $f(0,0)=0$. Here $f_{xy}(0,0) = -1$, but $f_{yx}(0,0) = +1$. |
-| **"If directional derivatives $D_v f(a)$ exist in all directions $v$, then $f$ is Fréchet differentiable."** | **False.** Directional differentiability (Gâteaux differentiability) does not imply total differentiability, nor does it imply continuity, unless the directional derivatives assemble into a continuous linear map with zero remainder. | $f(x,y) = \frac{x^3}{x^2+y^2}$ for $(x,y)\neq(0,0)$, $f(0,0)=0$. $D_v f(0,0)$ exists for all $v$, but $f$ is not Fréchet differentiable at $(0,0)$ because $D_v f(0,0)$ is non-linear in $v$. |
-| **"The total differential $df$ is just a tiny number."** | **False.** The total differential at $a$, denoted $df(a)$ or $D f(a)$, is a *linear map* (bounded linear operator) $L: \mathbb{R}^n \to \mathbb{R}^m$. $df = \sum_{i=1}^n \frac{\partial f}{\partial x_i} dx_i$ evaluates this map on incremental vector inputs $dx$. | In matrix form, $df(a)(h) = J_f(a) h$, where $J_f(a)$ is the Jacobian matrix and $h \in \mathbb{R}^n$. |
+| $\lVert x \rVert$ | Euclidean norm on $\mathbb{R}^n$ | `\lVert ... \rVert`, never `\Vert`, never a bare pipe |
+| $\lvert t \rvert$ | absolute value of a scalar | `\lvert ... \rvert` |
+| $B_r(a)$ | open ball of radius $r$ about $a$ | Definition 3.1 |
+| $\partial_j f_i$, $\dfrac{\partial f_i}{\partial x_j}$ | partial derivative of component $i$ in direction $j$ | Definition 3.5 |
+| $D_v f(a)$ | directional derivative along $v$ | unit $v$ unless stated otherwise; Definition 3.6 |
+| $Df(a)$ | the Fréchet derivative, a linear map $\mathbb{R}^n \to \mathbb{R}^m$ | Definition 3.7 |
+| $J_f(a)$ | Jacobian matrix of $Df(a)$ | $m \times n$, so $J_f = (\nabla f)^\top$ when $m = 1$ |
+| $\nabla f(a)$ | gradient of a scalar field | a **column** vector in $\mathbb{R}^n$ |
+| $\lVert A \rVert_{\mathrm{op}}$ | operator norm | the default matrix norm |
+| $o(\lVert h \rVert)$ | Landau little-o | bare letter, not `\mathcal{O}` |
+| $C^1(U)$ | partials exist and are continuous on $U$ | Definition 3.8 |
 
----
+## Core results
 
-## Directory Inventory
+| Result | Statement | Hypotheses that carry the weight |
+| :--- | :--- | :--- |
+| **Theorem 4.1** | $L$ is unique; $f$ is continuous at $a$; $D_v f(a) = Lv$ for every $v$; $L = J_f(a)$ | differentiability at the single point $a$, and $U$ open |
+| **Theorem 4.2** | partials existing on $B_r(a)$ and continuous at $a$ $\Rightarrow$ $f$ differentiable at $a$, $Df(a) = J_f(a)$ | existence on a *neighbourhood* feeds the mean value theorem; continuity is needed only at $a$ |
+| **Theorem 4.3** | $D(g \circ f)(a) = Dg(b) \, Df(a)$ with $b = f(a)$ | differentiability of $f$ at $a$, not just its partials — directional derivatives do not compose |
+| **Theorem 4.4** | $\partial_x \partial_y f(a,b) = \partial_y \partial_x f(a,b)$ | $\partial_y \partial_x f$ continuous at the single point $(a,b)$; the other mixed partial is part of the conclusion, not a hypothesis |
+| **Theorem 4.5** | $\lVert f(y) - f(x) \rVert \le M \lVert y - x \rVert$ when $\lVert Df \rVert_{\mathrm{op}} \le M$ | $U$ convex, so the segment stays inside; for $m \ge 2$ no equality form exists |
+| **Proposition 4.6** | (C) $\Rightarrow$ (F) $\Rightarrow$ (A) $\Rightarrow$ (P), and every other implication is false | each false converse is blocked by an explicit function, all five checked in Section 7.3 |
+| **Theorem 4.7** (cited) | invertible $J_f(a)$ $\Rightarrow$ $f$ is a $C^1$ diffeomorphism near $a$ | needs the contraction mapping principle, which this area develops later |
+| **Proposition 4.8** | $\lVert f(y) - f(x) \rVert \ge \lambda \lVert y - x \rVert$ on a ball, $\lambda = 1/(2\lVert J_f(a)^{-1} \rVert_{\mathrm{op}})$ | $f \in C^1$ and $J_f(a)$ invertible; this is the injectivity half of Theorem 4.7, proved in full |
 
-```text
-calculus/10_multivariable_functions_partials/
-├── README.md               # Overview, Concept Map, Misconceptions, & References (This File)
-├── first_principles.ipynb  # First-Principles Theory, Rigorous Proofs, Algorithmic & Physical Applications
-└── exercises.ipynb         # 4-Tier Exercise Package (40 Fully Solved Problems with Boxed Answers & Takeaways)
-```
+## Common misconceptions
 
----
+| Misconception | What is actually true | The counterexample |
+| :--- | :--- | :--- |
+| "Both partial derivatives exist, so $f$ is continuous." | Partials probe two lines out of infinitely many directions. Continuity and (P) are **incomparable**, not nested. | $f(x,y) = xy/(x^2+y^2)$, $f(0,0)=0$: both partials vanish at the origin, yet $f \equiv 1/2$ on $y = x$. |
+| "Every straight-line limit is $L$, so the limit is $L$." | The limit must agree along *every* path, including curved ones. | $f(x,y) = x^2 y/(x^4+y^2)$: every line gives $0$, the parabola $y = kx^2$ gives $k/(1+k^2)$. |
+| "Mixed partials always commute." | They commute when the mixed partial is continuous at the point (Theorem 4.4). Continuity is the whole content of the theorem. | Peano's $f(x,y) = xy(x^2-y^2)/(x^2+y^2)$: $f_{xy}(0,0) = -1$ while $f_{yx}(0,0) = +1$. |
+| "All directional derivatives exist, so $f$ is differentiable." | Differentiability additionally requires $v \mapsto D_v f(a)$ to be **linear** and the remainder to be $o(\lVert h \rVert)$ uniformly. | $f(x,y) = x^3/(x^2+y^2)$: $D_v f(0,0) = v_1^3/\lVert v \rVert^2$, which is not additive. |
+| "Differentiable at $a$, so the partials are continuous at $a$." | Differentiability is pointwise; it says nothing about neighbouring points. $C^1$ is sufficient, never necessary. | $f(x,y) = (x^2+y^2)\sin\bigl(1/(x^2+y^2)\bigr)$: differentiable at the origin with $Df(0)=0$, while $\partial_x f$ is unbounded on every neighbourhood. |
+| "Continuity gives you at least the partials." | It gives you neither. | $f(x,y) = \lvert x \rvert$ is continuous on $\mathbb{R}^2$ and has no $\partial_x f$ anywhere on $x = 0$. |
+| "The total differential $df$ is a small number." | $df(a)$ is a linear map; $df(a)(h) = J_f(a) h$ evaluates it on an increment. | The first-order estimate it produces is a *bound to first order only* — see Problem L2.8, where the true worst case is $4.0918\%$ against a linear bound of $4\%$. |
 
-## Recommended References
+## Exercise index
 
-1. **Spivak, Michael** — *Calculus on Manifolds: A Modern Approach to Classical Theorems of Advanced Calculus*, Westview Press, 1965. *(Gold standard for Fréchet differentiability, total differentials, and rigorous multivariable analysis).*
-2. **Apostol, Tom M.** — *Mathematical Analysis*, 2nd Edition, Addison-Wesley, 1974; and *Calculus, Volume II*, 2nd Edition, Wiley, 1969. *(Masterful coverage of multivariable limits, continuity, partial derivatives, and Clairaut's theorem).*
-3. **Marsden, Jerrold E., & Tromba, Anthony J.** — *Vector Calculus*, 6th Edition, W. H. Freeman, 2011. *(Exceptional geometric intuition, level sets, partial derivatives, and physical field applications).*
-4. **Demidovich, B. P.** — *Problems in Mathematical Analysis*, Mir Publishers, 1973. *(Classical source for challenging multivariable limits, singular points, and path-dependent counterexamples).*
-5. **Stewart, James** — *Multivariable Calculus*, 8th Edition, Cengage Learning, 2015. *(Accessible introductory multivariable geometry, level surfaces, and computational foundations).*
-6. **Pólya, George, & Szegő, Gábor** — *Problems and Theorems in Analysis*, Springer, 1998. *(Advanced mathematical techniques and structural insights).*
-7. **Putnam Competition & Cambridge Mathematical Tripos** — *Selected Multivariable Real Analysis Problems*.
+[`exercises.ipynb`](exercises.ipynb) holds **40 problems**, every one fully solved, with a code
+cell that recomputes each numeric or algorithmic answer and asserts it.
+
+| Tier | Count | Contents |
+| :--- | ---: | :--- |
+| `L0 — Concept Checks` | 8 | level curves, a slope-dependent limit, partials at a corner, one total differential, one Clairaut check, a removable discontinuity, one directional derivative, the Gâteaux/Fréchet distinction |
+| `L1 — Foundations` | 10 | domain topology, an $\varepsilon$-$\delta$ proof, partials without continuity, lines versus parabolas, a polar squeeze, third-order mixed partials, linear approximation, differentiability from the definition, the spherical Jacobian |
+| `L2 — Applications (AI/ML and Physics)` | 12 | heat kernel, d'Alembert's wave solution, the logarithmic potential, a Maxwell relation, the least-squares gradient, the softmax Jacobian, a regularised functional, error propagation, an equipotential normal, dual-number autodiff, two-layer backpropagation, incompressible flow |
+| `L3 — Challenge Proofs` | 10 | Peano's function, two directional-derivative pathologies, the Fréchet threshold for $r^{2\alpha}\sin(r^{-2})$, Euler's homogeneous function theorem, first-order convexity, the Newtonian potential, local versus global invertibility, $S_3$-invariance of third partials, a nowhere-differentiable continuous function |
+
+## References
+
+- Rudin, W. *Principles of Mathematical Analysis*, 3rd ed., Ch. 9 — Thm 9.15 (chain rule),
+  Thm 9.19 (mean value inequality), Thm 9.21 (continuous partials give differentiability),
+  Thm 9.24 (inverse function theorem), Thm 9.41 (the sharp mixed-partial theorem, proved here as
+  Theorem 4.4).
+- Spivak, M. *Calculus on Manifolds*, Ch. 2 — Thm 2-8 (chain rule), Thm 2-7 (partials and the
+  derivative), Thm 2-9 (continuous partials criterion).
+- Apostol, T. M. *Mathematical Analysis*, 2nd ed., Ch. 12 — Thm 12.11 (total derivative from
+  continuous partials), Thm 12.13 (chain rule).
+- Hubbard, J. H. and Hubbard, B. B. *Vector Calculus, Linear Algebra, and Differential Forms*,
+  5th ed., §1.7–1.9 (derivative as a linear map, criterion for differentiability) and §2.10
+  (inverse and implicit function theorems).
+- Marsden, J. E. and Tromba, A. J. *Vector Calculus*, 6th ed., Ch. 2 — level sets, partial and
+  directional derivatives.
+- Demidovich, B. P. *Problems in Mathematical Analysis*, §VI — the classical pathological limits
+  reused in Proposition 4.6 and the `L3` tier.
+- Boyd, S. and Vandenberghe, L. *Convex Optimization*, §3.1.3 — the first-order convexity
+  condition proved in Problem L3.6.
+- Within this repository: [the module graph](../../docs/prerequisites.md),
+  [the notation register](../../docs/notation.md),
+  [first_principles.ipynb](first_principles.ipynb), [exercises.ipynb](exercises.ipynb).

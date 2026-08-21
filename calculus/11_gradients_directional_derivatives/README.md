@@ -1,93 +1,142 @@
-# Topic 11: Gradients & Directional Derivatives — Calculus Mastery Module
+# Module 11 — Gradients and Directional Derivatives
 
-**Status:** Active  
-**Level:** Advanced Foundation (Part II of Calculus & Multivariable Analysis Series)  
-**Target Audience:** Mathematical Modelers, Optimization Engineers, Physicists, AI/ML Researchers  
+A function of one variable has two directions of travel and one derivative. A scalar field
+$f : \mathbb{R}^n \to \mathbb{R}$ has infinitely many directions of travel, and this module shows that
+a single vector — the gradient $\nabla f(\mathbf{x})$ — encodes the rate of change along every one of
+them. Module 10 built the $n$ partial derivatives; here they are assembled into one object and the
+consequences are extracted.
 
----
+Three consequences carry the module. The rate along a unit direction $\mathbf{u}$ is the inner product
+$\langle \nabla f(\mathbf{x}), \mathbf{u}\rangle$, so no new limit is ever needed. Maximising that
+inner product over the unit sphere identifies $\nabla f$ itself as the unique steepest-ascent
+direction, with $\lVert \nabla f \rVert$ as the maximal rate. And because moving along a level set
+changes nothing, the gradient is the normal to the level set, which is where tangent hyperplanes come
+from for free.
 
-## 📌 Module Overview
+The module is deliberately strict about hypotheses. Existence of all partial derivatives — even of all
+directional derivatives — does not give the inner-product formula: $f(x,y) = x^3/(x^2+y^2)$ at the
+origin has $D_{\mathbf{u}}f = u_1^3$, which is not linear in $\mathbf{u}$. Fréchet differentiability is
+the hypothesis that does the work, and every theorem here says so.
 
-In multivariable calculus, understanding how functions change across multidimensional spaces is central to modeling physical systems, analyzing scalar and vector fields, and optimizing complex loss functions in machine learning. While single-variable calculus measures rate of change along a single line via $f'(x)$, multivariable functions $f: \mathbb{R}^n \to \mathbb{R}$ possess infinitely many directions in which change can occur.
+Finally the gradient is set in motion. The flow $\dot{\mathbf{x}} = -\nabla f(\mathbf{x})$ dissipates
+$f$ at rate $\lVert \nabla f \rVert^2$, its explicit Euler discretisation is gradient descent, and the
+condition number of the Hessian controls how badly that descent zigzags — the bridge to every
+optimisation module downstream.
 
-This module develops the theory of **Gradients and Directional Derivatives** from first principles. It answers the fundamental questions:
-1. **Directional Query:** How fast does a scalar field change when moving in an arbitrary spatial direction $\mathbf{u}$?
-2. **Steepest Ascent/Descent:** Which direction maximizes or minimizes the instantaneous rate of increase, and what is that maximum rate?
-3. **Geometric Interpretation:** Why is the gradient vector $\nabla f(\mathbf{x}_0)$ always orthogonal to the level set $f(\mathbf{x}) = c$ at point $\mathbf{x}_0$?
-4. **Dynamical Trajectories:** How do continuous gradient flow systems $\dot{\mathbf{x}}(t) = -\nabla f(\mathbf{x}(t))$ evolve across energy landscapes, and how do they discretize into optimization algorithms like Gradient Descent?
+> [!NOTE]
+> **The master formula.** If $f$ is Fréchet differentiable at $\mathbf{x}$ and $\lVert \mathbf{u}\rVert = 1$,
+> then $D_{\mathbf{u}} f(\mathbf{x}) = \langle \nabla f(\mathbf{x}), \mathbf{u}\rangle = \lVert \nabla f(\mathbf{x})\rVert \cos\theta$.
+> Every directional rate is a linear functional of the direction; steepest ascent, level-set
+> orthogonality and the chain rule are all corollaries of this one line.
 
-This module connects pure analysis ($\varepsilon$-$\delta$ Fréchet differentiability) to physical field theory (electrostatics, heat flow, fluid dynamics) and modern artificial intelligence (loss landscapes, backpropagation, automatic differentiation, ill-conditioned optimization dynamics).
+## Prerequisites
 
----
+- [calculus/10 — Multivariable Functions and Partial Derivatives](../10_multivariable_functions_partials/)
+- [linear_algebra/04 — Orthogonality, Projections and QR](../../linear_algebra/04_orthogonality_projections_and_qr/)
 
-## 🎯 Learning Objectives
+**Downstream — modules this one unlocks**
 
-By completing this module, you will be able to:
+- [calculus/12 — Hessian, Jacobian and Curvature](../12_hessian_jacobian_curvature/)
+- [calculus/14 — Vector Calculus and Field Theorems](../14_vector_calculus_field_theorems/)
+- [calculus_optimization/01 — Derivatives and Gradients for ML](../../calculus_optimization/01_derivatives_and_gradients_for_ml/)
+- [optimization/03 — Gradient Descent and Convergence](../../optimization/03_gradient_descent_and_convergence/)
+- [optimization/05 — Constrained Optimization and Lagrange Multipliers](../../optimization/05_constrained_optimization_lagrange/)
 
-1. **Formulate & Derive Directional Derivatives**: Define the directional derivative $D_{\mathbf{u}}f(\mathbf{x})$ from first principles as a limit of a difference quotient along a direction vector, and prove the master inner product formula $D_{\mathbf{u}}f(\mathbf{x}) = \nabla f(\mathbf{x}) \cdot \mathbf{u}$ for differentiable functions.
-2. **Master Steepest Ascent & Geometry**: Use Cauchy-Schwarz inequality to prove that $\nabla f(\mathbf{x})$ points in the direction of maximum instantaneous rate of increase, with magnitude $\|\nabla f(\mathbf{x})\|$ representing that rate.
-3. **Construct Tangent Hyperplanes & Normal Vectors**: Rigorously prove that $\nabla f(\mathbf{x}_0)$ is orthogonal to the tangent space of the level set $f(\mathbf{x}) = c$, and construct explicit linear approximations, normal lines, and tangent hyperplanes.
-4. **Apply Multivariable Chain Rules**: Apply chain rules along parameterized curves $\mathbf{r}(t)$ and composite vector maps $\mathbf{g}(\mathbf{u})$, evaluating rates of change along dynamic trajectories.
-5. **Analyze Continuous & Discrete Gradient Flow**: Formulate gradient flow differential equations $\dot{\mathbf{x}} = -\nabla f(\mathbf{x})$, prove Lyapunov energy dissipation $\frac{d}{dt}f(\mathbf{x}(t)) \le 0$, and analyze convergence dynamics under conditioning of the Hessian matrix.
-6. **Solve 40 Solved Mastery Problems (L0–L3)**: Solve rigorous problems spanning conceptual checks, computational mastery, physics modeling (electrostatics, Fourier heat flow), deep learning loss surfaces (linear/logistic regression, softmax cross-entropy, backpropagation), and olympiad/Tripos level challenge proofs.
+## Learning outcomes
 
----
+- Define $D_{\mathbf{u}}f(\mathbf{x})$ as a one-dimensional limit and prove
+  $D_{\mathbf{u}}f = \langle \nabla f, \mathbf{u}\rangle$ from Fréchet differentiability alone.
+- Exhibit a function whose partial and directional derivatives all exist but which is not
+  differentiable, and say exactly which conclusion fails.
+- Prove by Cauchy–Schwarz that $\nabla f / \lVert \nabla f\rVert$ is the *unique* maximiser of the
+  directional derivative over the unit sphere.
+- Prove that $\nabla f(\mathbf{x}_0)$ annihilates every tangent vector of the level set through
+  $\mathbf{x}_0$, and state the extra hypotheses under which the tangent space is exactly that
+  orthogonal complement.
+- Apply the chain rule in both forms — along a curve, and as $J_{\mathbf{g}}^\top \nabla f$ — and
+  recognise backpropagation as the second form run right to left.
+- Prove $\frac{d}{dt}f(\mathbf{x}(t)) = -\lVert \nabla f(\mathbf{x}(t))\rVert^2$ along gradient flow and
+  read gradient descent as its Euler discretisation.
+- Predict and measure the order of forward and central finite-difference gradients, and the
+  $((\kappa-1)/(\kappa+1))^2$ contraction of exact-line-search steepest descent.
 
-## 📂 Directory Inventory
-
-```text
-calculus/11_gradients_directional_derivatives/
-├── README.md               <-- Module Overview, Concept Map, Misconceptions, & References (This File)
-├── first_principles.ipynb  <-- Complete First-Principles Theory, Proofs, Physics & AI/ML Applications
-└── exercises.ipynb         <-- 4-Level Exercise Package (40 Solved Problems with Boxed Answers & Takeaways)
-```
-
----
-
-## 🗺️ First-Principles Concept Map
+## Concept map
 
 ```mermaid
 flowchart TD
-    A["Scalar Field f: Rⁿ → R"] --> B["Fréchet Differentiability & Total Differential df"]
-    B --> C["Gradient Vector Field ∇f = [∂f/∂x₁, ..., ∂f/∂xₙ]ᵀ"]
-    C --> D["Directional Derivative Master Formula: Dᵤf = ∇f · u"]
-    C --> E["Geometric Orthogonality: ∇f ⊥ Tangent Space of Level Set f(x)=c"]
-    C --> F["Gradient Flow Dynamics: ẋ(t) = -∇f(x(t))"]
-    D --> G["Cauchy-Schwarz Maximization: max Dᵤf = ||∇f|| in direction u = ∇f/||∇f||"]
-    E --> H["Tangent Hyperplane: ∇f(x₀) · (x - x₀) = 0"]
-    F --> I["Energy Dissipation: d/dt f(x(t)) = -||∇f||² ≤ 0"]
-
-    G --> J["Steepest Descent Optimization & Line Search (Nocedal & Wright)"]
-    H --> K["First-Order Taylor Expansion & Local Linearization"]
-    I --> L["Discrete Gradient Descent xₖ₊₁ = xₖ - η∇f(xₖ) (Goodfellow et al.)"]
-
-    J --> M["Physical Vector Fields: E = -∇V, q = -k∇T (Marsden & Tromba)"]
-    L --> N["Deep Learning Backpropagation & Loss Surfaces"]
+    A["Scalar field f on R^n"] --> B["Frechet differentiability, Definition 3.1"]
+    B --> C["Gradient vector, Definition 3.2"]
+    C --> D["Master formula: D_u f = inner product of grad f and u, Theorem 4.1"]
+    D --> E["Steepest ascent by Cauchy-Schwarz, Theorem 4.2"]
+    D --> F["Chain rule along curves and compositions, Theorem 4.4"]
+    F --> G["Gradient normal to level sets, Theorem 4.3"]
+    F --> H["Energy dissipation along gradient flow, Theorem 4.5"]
+    G --> I["Tangent hyperplanes and normal lines"]
+    E --> J["Steepest descent direction"]
+    H --> K["Gradient descent as explicit Euler"]
+    J --> L["Kantorovich contraction rate, Derivation 5.6"]
+    K --> L
+    F --> M["Reverse-mode AD and backpropagation"]
+    I --> N["Physical fields: E = -grad V, q = -k grad T"]
 ```
 
----
+## Notation
 
-## ⚠️ Common Misconceptions Table
-
-| Misconception | Mathematical Reality | Correct First-Principles Concept |
+| Symbol | Meaning | Convention |
 |---|---|---|
-| **"The gradient points along the tangent line of the function graph $z = f(x,y)$."** | The gradient $\nabla f(x,y)$ lives strictly in the **domain space** $\mathbb{R}^n$, not in the codomain/graph space $\mathbb{R}^{n+1}$. | $\nabla f(x_0, y_0)$ is a 2D vector in the $xy$-plane pointing perpendicular to the **level curve** $f(x,y)=c$. The normal vector to the 3D surface $z - f(x,y) = 0$ is $\mathbf{n} = (\frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}, -1)^T$. |
-| **"Directional derivative $D_{\mathbf{v}}f$ can be computed using any direction vector $\mathbf{v}$."** | Directional derivatives measure rate of change per **unit distance**. If $\mathbf{v}$ is not a unit vector, $D_{\mathbf{v}}f$ scales linearly with $\Vert\mathbf{v}\Vert$. | Always normalize $\mathbf{u} = \frac{\mathbf{v}}{\Vert\mathbf{v}\Vert}$ before applying the formula $D_{\mathbf{u}}f = \nabla f \cdot \mathbf{u}$. |
-| **"If partial derivatives exist everywhere at a point, $D_{\mathbf{u}}f = \nabla f \cdot \mathbf{u}$ holds for all $\mathbf{u}$."** | Existence of partial derivatives does NOT imply Fréchet differentiability or continuity. The linear formula requires differentiability. | Without differentiability, directional derivatives can exist in all directions but fail to depend linearly on $\mathbf{u}$. |
-| **"Gradient descent trajectories follow straight lines to the global minimum."** | Steepest descent trajectories follow orthogonal paths across level curves $\dot{\mathbf{x}} = -\nabla f(\mathbf{x})$. On anisotropic/ill-conditioned landscapes, paths curve and zigzag sharply. | Path direction is local ($-\nabla f(\mathbf{x})$). Condition number $\kappa = \lambda_{\max}/\lambda_{\min}$ of the Hessian matrix dictates trajectory oscillation and convergence speed. |
-| **"The directional derivative $D_{\mathbf{u}}f(\mathbf{x})$ is a vector."** | $D_{\mathbf{u}}f(\mathbf{x})$ is a **scalar quantity** representing the slope / instantaneous rate of change of $f$ along direction $\mathbf{u}$. | The gradient $\nabla f(\mathbf{x})$ is a vector field; the directional derivative is the scalar projection $D_{\mathbf{u}}f = \nabla f \cdot \mathbf{u}$. |
-| **"Steepest descent direction is parallel to the level set."** | Level set $f(\mathbf{x})=c$ is the set of constant value ($D_{\mathbf{T}}f = 0$). Steepest descent is strictly **orthogonal** to the level set. | $\nabla f(\mathbf{x})$ is orthogonal to tangent vectors $\mathbf{T}$ of the level set because $\nabla f \cdot \mathbf{T} = 0$. |
+| $\nabla f(\mathbf{x})$ | gradient of $f$ at $\mathbf{x}$ | a **column** vector in $\mathbb{R}^n$ |
+| $Df(\mathbf{x})$ | Fréchet derivative | the row vector $\nabla f(\mathbf{x})^\top$ |
+| $D_{\mathbf{u}} f(\mathbf{x})$ | directional derivative along $\mathbf{u}$ | a **scalar**; $\mathbf{u}$ must be a unit vector |
+| $\langle \mathbf{a}, \mathbf{b}\rangle$ | Euclidean inner product $\mathbf{a}^\top\mathbf{b}$ | also written $\mathbf{a}\cdot\mathbf{b}$ |
+| $\lVert \mathbf{v} \rVert$ | Euclidean norm | written `\lVert ... \rVert`, never `\Vert` |
+| $J_{\mathbf{g}}(\mathbf{u})$ | Jacobian of $\mathbf{g}:\mathbb{R}^m\to\mathbb{R}^n$ | an $n \times m$ matrix; $J_f = (\nabla f)^\top$ when $n=1$ |
+| $\mathcal{S}_c$ | level set $\lbrace \mathbf{x} : f(\mathbf{x}) = c \rbrace$ | level curve for $n=2$, level surface for $n=3$ |
+| $T_{\mathbf{x}_0}\mathcal{S}_c$ | tangent space of the level set at $\mathbf{x}_0$ | velocities of curves lying in $\mathcal{S}_c$ |
+| $\kappa$ | condition number $\lambda_{\max}/\lambda_{\min}$ | of a positive definite Hessian |
+| $\lVert \mathbf{v} \rVert_{\mathbf{A}}$ | energy norm, $\sqrt{\mathbf{v}^\top\mathbf{A}\mathbf{v}}$ | requires $\mathbf{A} \succ 0$ |
 
----
+## Core results
 
-## 📖 Recommended References
+| Result | Statement | Hypotheses |
+|---|---|---|
+| Theorem 4.1 — master formula | $D_{\mathbf{u}}f(\mathbf{x}) = \langle \nabla f(\mathbf{x}), \mathbf{u}\rangle$ | $\Omega$ open, $f$ Fréchet differentiable at $\mathbf{x}$, $\lVert \mathbf{u}\rVert = 1$ |
+| Theorem 4.2 — steepest ascent | $\max_{\lVert \mathbf{u}\rVert=1} D_{\mathbf{u}}f = \lVert \nabla f\rVert$, attained only at $\nabla f/\lVert \nabla f\rVert$ | as Theorem 4.1, plus $\nabla f(\mathbf{x}) \neq \mathbf{0}$ for uniqueness |
+| Theorem 4.3 — level-set normal | $\langle \nabla f(\mathbf{x}_0), \mathbf{v}\rangle = 0$ for all $\mathbf{v} \in T_{\mathbf{x}_0}\mathcal{S}_c$ | $f$ differentiable; equality of the two spaces needs $f \in C^1$ and $\nabla f(\mathbf{x}_0) \neq \mathbf{0}$ |
+| Theorem 4.4 — chain rule | $(f\circ\mathbf{r})'(t_0) = \langle \nabla f(\mathbf{r}(t_0)), \mathbf{r}'(t_0)\rangle$; $\nabla(f\circ\mathbf{g}) = J_{\mathbf{g}}^\top \nabla f$ | inner map differentiable at the point, outer map differentiable at its image |
+| Theorem 4.5 — energy dissipation | $\frac{d}{dt} f(\mathbf{x}(t)) = -\lVert \nabla f(\mathbf{x}(t))\rVert^2 \le 0$ | $f \in C^1$ and $\mathbf{x}(\cdot)$ solves $\dot{\mathbf{x}} = -\nabla f(\mathbf{x})$ |
+| Derivation 5.6 — contraction rate | $\lVert \mathbf{x}_{k+1}-\mathbf{x}^\star\rVert_{\mathbf{A}}^2 \le \left(\frac{\kappa-1}{\kappa+1}\right)^2 \lVert \mathbf{x}_{k}-\mathbf{x}^\star\rVert_{\mathbf{A}}^2$ | quadratic objective, $\mathbf{A}\succ 0$, exact line search; bound is attained |
 
-- **Marsden, J. E., & Tromba, A.** *Vector Calculus* (6th Edition) — Chapters 2 & 4. Exemplary geometric treatment of directional derivatives, gradients, tangent planes, and conservative vector fields.
-- **Apostol, T. M.** *Calculus, Volume II: Multi-Variable Calculus and Linear Algebra with Applications* (2nd Edition) — Chapters 8 & 9. Rigorous treatment of Fréchet differentiation, gradient operator, chain rule, and implicit function theorem.
-- **Nocedal, J., & Wright, S. J.** *Numerical Optimization* (2nd Edition) — Chapters 2 & 3. Canonical reference for steepest descent dynamics, step length control, line search, and landscape conditioning.
-- **Goodfellow, I., Bengio, Y., & Courville, A.** *Deep Learning* (MIT Press) — Chapter 4 (Numerical Computation) & Chapter 6 (Deep Feedforward Networks). Gradient computation, automatic differentiation, loss surface topology, and backpropagation.
-- **Spivak, M.** *Calculus on Manifolds* — Chapters 2 & 3. Rigorous differential topology, total derivative as a linear transformation, and gradient as Riesz dual.
-- **Stewart, J.** *Multivariable Calculus* (8th Edition) — Chapter 14. Accessible computational practice for directional derivatives, tangent planes, and extreme values.
-- **Demidovich, B. P.** *Problems in Mathematical Analysis* — Multivariable Differential Calculus section (Problems 3201–3250). Classical benchmark computational problems.
-- **William Lowell Putnam Mathematical Competition & Cambridge Mathematical Tripos** — Archives on multivariable calculus, homogenous functions (Euler's theorem), and gradient vector fields.
+## Common misconceptions
 
+| Misconception | Reality | What to hold instead |
+|---|---|---|
+| "The gradient points uphill along the graph $z = f(x,y)$." | $\nabla f$ lives in the **domain** $\mathbb{R}^n$, not in the graph space $\mathbb{R}^{n+1}$. | $\nabla f(x_0,y_0)$ is a vector in the $xy$-plane, normal to the level curve. The normal to the surface $z - f(x,y) = 0$ is $(f_x, f_y, -1)^\top$. |
+| "Any direction vector will do in $D_{\mathbf{v}}f$." | The limit is positively homogeneous of degree one in $\mathbf{v}$, so an unnormalised $\mathbf{v}$ rescales the answer by $\lVert \mathbf{v}\rVert$. | Normalise first: $\mathbf{u} = \mathbf{v}/\lVert \mathbf{v}\rVert$, then apply Theorem 4.1. |
+| "If the partials exist, $D_{\mathbf{u}}f = \langle \nabla f, \mathbf{u}\rangle$." | Partials probe $n$ axes only. $f = x^3/(x^2+y^2)$ has all partials and all directional derivatives at the origin, yet $D_{\mathbf{u}}f = u_1^3$. | Fréchet differentiability, Definition 3.1, is the hypothesis that makes $\mathbf{u} \mapsto D_{\mathbf{u}}f$ linear. |
+| "$D_{\mathbf{u}}f(\mathbf{x})$ is a vector." | It is a scalar — the slope felt while walking along $\mathbf{u}$. | The gradient is the vector; the directional derivative is its projection onto $\mathbf{u}$. |
+| "Steepest descent heads straight at the minimiser." | $-\nabla f$ is the best *local* direction only. On an ill-conditioned quadratic it is nearly orthogonal to $\mathbf{x}^\star - \mathbf{x}_k$. | Consecutive exact-line-search steps are orthogonal, giving the zigzag; the error contracts by $((\kappa-1)/(\kappa+1))^2$ per step. |
+| "Steepest descent runs along the level set." | Along a level set the rate of change is exactly $0$, so no progress is made. | $-\nabla f$ crosses level sets at right angles, by Theorem 4.3. |
+| "Smaller $h$ always gives a better finite-difference gradient." | Below $h \approx \varepsilon^{1/2}$ (forward) or $\varepsilon^{1/3}$ (central), cancellation roundoff of size $\varepsilon/h$ dominates the truncation error. | The total error is U-shaped in $h$; pick $h$ at the measured minimum, not at the smallest representable value. |
+
+## Exercise index
+
+`exercises.ipynb` contains **40 problems**, every one fully solved with a boxed answer, a key takeaway,
+and — wherever the answer is numeric — a code cell that recomputes it.
+
+| Tier | Title | Count | Focus |
+|---|---|---|---|
+| L0 | Concept Checks | 8 | one-line facts: what kind of object each symbol is, when a hypothesis is needed |
+| L1 | Foundations | 10 | gradients, directional derivatives, tangent planes, chain rule by hand |
+| L2 | Applications (AI/ML and Physics) | 12 | electrostatics, heat flow, thermodynamic potentials, regression and softmax gradients, descent dynamics |
+| L3 | Challenge Proofs | 10 | Euler's homogeneous-function theorem, non-differentiability counterexamples, mean value inequalities, flow convergence |
+
+## References
+
+- Apostol, T. M., *Calculus, Volume II*, 2nd ed., §12.2, §12.4 (Thm 12.4 — the master formula), §12.6, §12.10
+- Rudin, W., *Principles of Mathematical Analysis*, 3rd ed., §9.6–9.12, Thm 9.15, Thm 9.28 (implicit function theorem)
+- Spivak, M., *Calculus on Manifolds*, Ch. 2 (Thm 2-7, Thm 2-9)
+- Marsden, J. E. & Tromba, A., *Vector Calculus*, 6th ed., §2.5–2.6, §4.3
+- Nocedal, J. & Wright, S. J., *Numerical Optimization*, 2nd ed., §2.2, §3.3 (eq. 3.29)
+- Luenberger, D. G. & Ye, Y., *Linear and Nonlinear Programming*, 4th ed., §8.2 (Thm 1, Kantorovich inequality)
+- Goodfellow, I., Bengio, Y. & Courville, A., *Deep Learning*, §4.3, §6.5
+- Higham, N. J., *Accuracy and Stability of Numerical Algorithms*, 2nd ed., §1.11

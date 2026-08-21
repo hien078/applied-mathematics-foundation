@@ -1,105 +1,158 @@
-# Topic 03: Single Variable Derivatives — Calculus Mastery Module
+# Module 03 — Single Variable Derivatives
 
-**Status:** Complete Learning Unit  
-**Module Type:** Foundation Topic Module  
-**Parent Framework:** Foundations / Calculus  
+Every quantitative model has to answer one question before it can be optimised, calibrated or
+trusted: if the input moves a little, how does the output move? The derivative is that answer in
+its sharpest form — it replaces a nonlinear function, near a point, by the single linear map that
+reproduces its first-order response.
 
----
+That replacement is the engine underneath gradient descent, Newton's method, sensitivity analysis,
+kinematics and backpropagation. None of them ever inspects a function globally; all of them run on
+local linear models and on the rules that keep those models consistent under sums, products and
+composition.
 
-## 1. Executive Summary & Learning Objectives
+This module builds the derivative from the secant-slope limit of
+[`calculus/02_limits_and_continuity`](../02_limits_and_continuity/), then *proves* the
+differentiation rules rather than reciting them. The chain rule gets particular care: the popular
+"cancel the $du$" argument divides by a quantity that can vanish arbitrarily close to the point of
+interest, so the proof here goes through Carathéodory's factorisation instead, which never divides
+at all.
 
-Single-variable differentiation is the fundamental mathematical tool for quantifying local, instantaneous change. Rather than treating differentiation as a mechanical list of symbol-manipulation rules, this module establishes derivatives from first principles as **the unique local linear approximation** of a function near a point.
+It closes with the two ways a machine actually produces derivatives — finite differences, which
+trade truncation error against round-off and hit an accuracy floor far above machine precision, and
+forward-mode automatic differentiation on dual numbers, which has no step size and therefore no
+truncation error.
 
-From the secant-line limit definition to high-order derivatives, this module covers the foundational mechanics, analytical proofs, computational algorithms, and real-world applications of single-variable calculus in physics and machine learning.
+> [!NOTE]
+> **The chain rule is the module's load-bearing result.** If $g$ is differentiable at $x_0$ and $f$
+> is differentiable at $g(x_0)$, then $(f \circ g)'(x_0) = f'(g(x_0))\, g'(x_0)$. Backpropagation is
+> this identity applied to a composition of hundreds of layers, which is why a depth-$N$ gradient is
+> a *product* of $N$ local derivatives — and why stacking sigmoids, whose derivative never exceeds
+> $1/4$, cannot pass more than $4^{-N}$ of a gradient.
 
-### Learning Objectives
+## Prerequisites
 
-By completing this module, you will be able to:
-1. **Define** the derivative as the limit of secant slopes $\lim_{h \to 0} \frac{f(x+h) - f(x)}{h}$ and formulate differentiability via local linearity with Landau asymptotic error terms $f(x+h) = f(x) + f'(x)h + O(h^2)$.
-2. **Derive** fundamental differentiation rules (Product, Quotient, Chain, Inverse Function, and Logarithmic Differentiation) from first principles with full analytical rigor (e.g., using Carathéodory's formulation for the Chain Rule).
-3. **Apply** implicit differentiation to geometric level curves $F(x, y) = c$ and physical constraint manifolds.
-4. **Compute** high-order derivatives $f^{(n)}(x)$ using the General Leibniz Rule and understand structural expansions like Faà di Bruno's formula.
-5. **Implement** forward-mode automatic differentiation using dual numbers ($a + b\epsilon$ where $\epsilon^2 = 0$) and numerical finite difference stencils, analyzing truncation versus round-off error.
-6. **Analyze** physical kinematics (velocity, acceleration, jerk) and machine learning activation function derivatives (Sigmoids, GELU, Swish, Softplus) used in deep neural network backpropagation.
+| Direction | Modules |
+|---|---|
+| Requires | [`calculus/02_limits_and_continuity`](../02_limits_and_continuity/) |
+| Downstream (unlocks) | [`calculus/04_derivative_applications_optimization`](../04_derivative_applications_optimization/), [`calculus/05_indefinite_and_definite_integrals`](../05_indefinite_and_definite_integrals/), [`calculus/09_taylor_and_power_series`](../09_taylor_and_power_series/), [`calculus/10_multivariable_functions_partials`](../10_multivariable_functions_partials/), [`numerical_computing/03_conditioning_and_condition_numbers`](../../numerical_computing/03_conditioning_and_condition_numbers/) |
 
----
+From the prerequisite you need the epsilon-delta definition of a limit, the limit laws, continuity
+at a point, and the two trigonometric limits $\lim_{h\to 0}\frac{\sin h}{h}=1$ and
+$\lim_{h\to 0}\frac{\cos h-1}{h}=0$.
 
-## 2. First-Principles Concept Map
+## Learning outcomes
+
+After this module you will be able to:
+
+- State the derivative both as a limit of secant slopes and as local linearity,
+  $f(x_0+h)=f(x_0)+f'(x_0)h+o(h)$, and explain why the second form is the one that generalises to $\mathbb{R}^n$.
+- Prove that differentiability implies continuity, and produce the standard counterexample showing
+  the converse fails.
+- Derive the power, sine and exponential derivatives directly from the limit definition, and see
+  why a base catalogue is needed before any rule can be applied.
+- Prove the product, quotient, chain, inverse-function and general Leibniz rules, and say for each
+  one exactly which hypothesis each step consumes.
+- Explain why the naive chain-rule proof is invalid, and reproduce Carathéodory's division-free
+  argument that repairs it.
+- Differentiate implicitly on a level curve $F(x,y)=0$ and identify the points where the method
+  fails because $F_y = 0$.
+- Predict the optimal finite-difference step size in double precision and the accuracy floor it
+  implies, and measure both.
+- Implement forward-mode automatic differentiation on dual numbers and check it against a SciPy
+  routine and an exact symbolic derivative.
+- Derive the sigmoid, softplus, GELU and Swish derivatives and read the vanishing-gradient problem
+  off the chain rule.
+
+## Concept map
 
 ```mermaid
 graph TD
-    A["Secant Line Slope<br/>Δy / Δx = (f(x+h) - f(x)) / h"] --> B["Limit as h → 0<br/>Instantaneous Rate of Change"]
-    B --> C["The Derivative f'(x)<br/>Best Local Linear Approximation"]
+    A["Secant slope<br/>(f(x+h) - f(x)) / h"] --> B["Limit h → 0<br/>Definition 3.1"]
+    B --> C["Local linearity<br/>f(x+h) = f(x) + f'(x)h + o(h)<br/>Definition 3.4"]
 
-    C --> D["Local Linearity & Asymptotics<br/>f(x+h) = f(x) + f'(x)h + O(h²)"]
-    C --> E["Fundamental Derivative Rules"]
+    B --> T1["Theorem 4.1<br/>differentiable ⇒ continuous"]
+    T1 -.->|"converse fails"| CX["|x| at 0"]
 
-    E --> E1["Product Rule (uv)' = u'v + uv'"]
-    E --> E2["Quotient Rule (u/v)' = (u'v - uv')/v²"]
-    E --> E3["Chain Rule (f ∘ g)' = f'(g(x)) g'(x)"]
+    B --> E["Proof 5.2<br/>base catalogue: x^n, sin, exp"]
+    E --> T2["Theorem 4.2<br/>product and quotient rules"]
+    T2 --> T3["Theorem 4.3<br/>chain rule"]
+    T3 --> L54["Lemma 5.4 Carathéodory<br/>division-free factorisation"]
+    T3 --> T4["Theorem 4.4<br/>inverse function rule"]
+    T3 --> T5["Theorem 4.5<br/>implicit differentiation"]
+    T3 --> T6["Theorem 4.6<br/>logarithmic derivative"]
+    T2 --> T7["Theorem 4.7<br/>general Leibniz rule"]
 
-    C --> F["Implicit & Logarithmic Differentiation"]
-    F --> F1["Implicit: F(x,y)=0 ⇒ dy/dx = -F_x / F_y"]
-    F --> F2["Logarithmic: d/dx ln|y| = y'/y"]
+    C --> N1["Finite differences<br/>truncation vs round-off"]
+    C --> N2["Dual numbers ε² = 0<br/>forward-mode AD"]
 
-    C --> G["Higher-Order Derivatives"]
-    G --> G1["General Leibniz Rule (uv)⁽ⁿ⁾"]
-    G --> G2["Curvature & Acceleration Dynamics"]
-
-    D --> H["Computational Methods"]
-    H --> H1["Finite Differences & Step Size h"]
-    H --> H2["Dual Numbers & Auto-Diff (ε² = 0)"]
-
-    E3 --> I["Physics & AI Applications"]
-    I --> I1["Kinematics: Velocity, Acceleration, Jerk"]
-    I --> I2["Neural Nets: Sigmoids, GELU, Backprop"]
-
+    T3 --> A1["Backpropagation<br/>vanishing gradients"]
+    T7 --> A2["Kinematics<br/>velocity, acceleration, jerk"]
 ```
 
----
+## Notation
 
-## 3. Common Misconceptions Table
-
-| Misconception | Mathematical Reality | Correct Mental Model |
+| Symbol | Meaning | Convention fixed here |
 |---|---|---|
-| *"The derivative $f'(x)$ is obtained by plugging $h = 0$ directly into $\frac{f(x+h) - f(x)}{h}$."* | Direct substitution yields $\frac{0}{0}$, which is undefined. The derivative is the **limit** as $h \to 0$, evaluating behavior in an open punctured neighborhood of $x$. | Secant slopes approach a limiting slope as the secant line rotates into the tangent line. |
-| *"Continuity guarantees differentiability."* | Continuity ensures no jumps or gaps, but does not prevent sharp corners (e.g., $f(x) = \lvert x \rvert$) or infinite vertical oscillations (e.g., $x \sin(1/x)$). | Continuity is a necessary condition for differentiability, but not a sufficient one. |
-| *"The Chain Rule proof can always be written as $\frac{dy}{dx} = \frac{dy}{du} \cdot \frac{du}{dx}$ by canceling $du$."* | Division by $du$ fails if $g(x) - g(x_0) = 0$ infinitely often in every neighborhood of $x_0$ (e.g., $x^2 \sin(1/x)$). | Use Carathéodory's continuous auxiliary function $\phi(u)$ where $f(u) - f(u_0) = \phi(u)(u - u_0)$. |
-| *"Logarithmic differentiation $\frac{d}{dx} \ln(f(x))$ only applies when $f(x) \gt 0$."* | Using absolute values $\ln \lvert f(x) \rvert$, the formula $\frac{f'(x)}{f(x)}$ holds for all points where $f(x) \neq 0$. | $\frac{d}{dx} \ln \lvert f(x) \rvert = \frac{f'(x)}{f(x)}$ domain is $\{x \in \mathbb{R} : f(x) \neq 0\}$. |
-| *"Numerical differentiation with smaller step size $h \to 0$ always gives higher accuracy."* | In finite-precision floating-point arithmetic, as $h \to 0$, round-off error $O(\epsilon_{\text{mach}}/h)$ dominates truncation error $O(h^2)$. Optimal $h \approx \sqrt{\epsilon_{\text{mach}}}$. | Total error forms a U-curve: truncation error dominates for large $h$, round-off error dominates for small $h$. |
+| $f'(x_0)$, $\frac{df}{dx}$ | derivative at a point | Lagrange and Leibniz forms used interchangeably |
+| $f'_+(x_0)$, $f'_-(x_0)$ | right- and left-hand derivatives | Definition 3.2 |
+| $f^{(n)}$ | $n$-th derivative, with $f^{(0)} = f$ | never $f^n$, which is a power |
+| $C^k(I)$ | $f^{(k)}$ exists and is continuous on $I$ | |
+| $O$, $o$ | asymptotic notation as $h \to 0$ | bare capitals, never `\mathcal{O}` |
+| $\lvert x \rvert$ | absolute value | `\lvert ... \rvert`, never a bare pipe |
+| $\varepsilon$ | the dual unit, $\varepsilon^2 = 0$, $\varepsilon \neq 0$ | distinct from $\epsilon_{\text{mach}}$ |
+| $\epsilon_{\text{mach}}$ | unit roundoff, $\approx 2.22 \times 10^{-16}$ | IEEE-754 binary64 |
+| $F_x$, $F_y$ | partial derivatives of $F(x,y)$ | used only inside Theorem 4.5 |
+| $\sigma(z)$ | logistic sigmoid $(1+e^{-z})^{-1}$ | |
+| $\Phi$, $\phi$ | standard normal CDF and density | $\phi = \Phi'$ |
 
----
+## Core results
 
-## 4. Directory Inventory
+| # | Result | Statement | Hypotheses that cannot be dropped |
+|---|---|---|---|
+| Thm 4.1 | Differentiability ⇒ continuity | $f'(x_0)$ exists $\Rightarrow$ $f$ continuous at $x_0$ | finiteness of $f'(x_0)$; the converse is false |
+| Thm 4.2 | Product and quotient | $(uv)' = u'v + uv'$; $(u/v)' = (u'v - uv')/v^2$ | both differentiable at the same $x_0$; $v(x_0) \neq 0$ |
+| Thm 4.3 | Chain rule | $(f \circ g)'(x_0) = f'(g(x_0))\,g'(x_0)$ | $f$ differentiable **at $g(x_0)$**, not at $x_0$ |
+| Thm 4.4 | Inverse function rule | $(f^{-1})'(y_0) = 1/f'(x_0)$, $y_0 = f(x_0)$ | $f$ continuous and strictly monotonic; $f'(x_0) \neq 0$ |
+| Thm 4.5 | Implicit differentiation | $dy/dx = -F_x/F_y$ on $F(x,y)=0$ | $F \in C^1$; $F_y(x_0,y_0) \neq 0$ |
+| Thm 4.6 | Logarithmic derivative | $\frac{d}{dx}\ln\lvert f \rvert = f'/f$ | $f(x_0) \neq 0$ |
+| Thm 4.7 | General Leibniz rule | $(uv)^{(n)} = \sum_k \binom{n}{k} u^{(n-k)} v^{(k)}$ | both factors $n$ times differentiable |
+| §7.1 | Finite-difference step balance | $h_{\text{opt}} = \left(3\epsilon_{\text{mach}}\lvert f \rvert / M_3\right)^{1/3}$ for the central stencil | $M_3 = \sup\lvert f''' \rvert$ finite; bound is worst-case |
 
-This module contains the following core files:
+## Common misconceptions
 
-1. **[`README.md`](README.md)**: Module executive summary, learning objectives, concept map, misconceptions table, directory inventory, and canonical reference list.
-2. **[`first_principles.ipynb`](first_principles.ipynb)**: Comprehensive first-principles theory, rigorous limit definitions, full proofs (including Carathéodory's chain rule and General Leibniz rule), local linearity asymptotics $O(h^2)$, forward-mode dual number auto-differentiation, and physics/AI applications.
-3. **[`exercises.ipynb`](exercises.ipynb)**: A complete 40-problem 4-level exercise package and step-by-step solutions manual spanning:
-   - **L0 (Concept Checks)**: 8 fundamental conceptual and geometric questions.
-   - **L1 (Foundations)**: 10 core standard textbook and computational problems.
-   - **L2 (Applications, AI/ML and Physics)**: 12 applied problems (kinematics, activation functions, backprop, autograd, implicit layers).
-   - **L3 (Challenge Proofs)**: 10 advanced competition and analysis problems (Tripos, Demidovich, Kaczor & Nowak, Landau inequalities).
+| Misconception | Mathematical reality | Correct mental model |
+|---|---|---|
+| *"Set $h = 0$ in $\frac{f(x+h)-f(x)}{h}$."* | That is $0/0$, undefined. The derivative is a **limit** over a punctured neighbourhood of $0$. | Secant slopes rotate onto the tangent; the value at $h=0$ is never used. |
+| *"Continuity is enough for differentiability."* | Continuity forbids jumps, not corners. $\lvert x \rvert$ is continuous at $0$ with $f'_+(0)=1 \neq -1 = f'_-(0)$. | Theorem 4.1 runs one way only. |
+| *"The chain rule follows by cancelling $du$."* | The cancellation divides by $g(x)-g(x_0)$, which vanishes infinitely often near $0$ for $g(x)=x^2\sin(1/x)$, $g(0)=0$. | Lemma 5.4 factors $f(u)-f(u_0)=\phi(u)(u-u_0)$ with no division anywhere. |
+| *"The inverse function rule only needs $f$ to be invertible."* | It also needs $f'(x_0)\neq 0$. For $f(x)=x^3$ the inverse $y^{1/3}$ has difference quotients diverging like $\delta^{-2/3}$ at $0$. | A horizontal tangent reflects to a vertical one, and vertical tangents have no slope. |
+| *"$\frac{d}{dx}\ln\lvert f\rvert = f'/f$ only where $f \gt 0$."* | The absolute value extends it to every point with $f(x)\neq 0$; on $f \lt 0$ the two sign flips cancel. | The domain of the identity is $\{x : f(x)\neq 0\}$. |
+| *"Smaller $h$ always gives a better numerical derivative."* | Round-off grows like $\epsilon_{\text{mach}}\lvert f\rvert / h$ while truncation falls like $h^2$; total error is U-shaped with a minimum near $h \approx 10^{-5}$. | Best attainable accuracy is about $\epsilon_{\text{mach}}^{2/3} \approx 10^{-11}$, not $\epsilon_{\text{mach}}$. |
+| *"Automatic differentiation is finite differences done carefully."* | AD introduces no step size at all: dual arithmetic is exact algebra in $\mathbb{R}[\varepsilon]/(\varepsilon^2)$. | Its only error is the rounding already present in evaluating $f$. |
 
----
+## Exercise index
 
-## 5. Recommended References & Canonical Literature
+[`exercises.ipynb`](exercises.ipynb) contains 40 problems, every one worked in full.
 
-1. **Spivak, M.** (2008). *Calculus* (4th ed.). Publish or Perish.
-   - *Chapters 9, 10, 11 & 12*: Foundations of derivatives, differentiation rules, local approximation, and inverse functions.
-2. **Apostol, T. M.** (1967). *Calculus, Volume 1: One-Variable Calculus, with an Introduction to Linear Algebra* (2nd ed.). John Wiley & Sons.
-   - *Chapter 3*: The derivative, mean value theorems, and derivative rules.
-3. **Stewart, J.** (2015). *Calculus: Early Transcendentals* (8th ed.). Cengage Learning.
-   - *Chapter 3*: Differentiation rules, implicit differentiation, and rate of change models.
-4. **Demidovich, B. P.** (1973). *Problems in Mathematical Analysis*. Mir Publishers.
-   - *Chapter II*: Differentiation of functions (Problems 651–1000).
-5. **Landau, E.** (1913). *Einige Ungleichungen für die zweiten Ableitungen einer Funktion*. Mathematische Zeitschrift.
-   - Foundation for differential inequality bounds ($M_1^2 \le 4 M_0 M_2$).
-6. **Bernoulli, J.** (1696). *Problema novum ad cujus solutionem Mathematici invitantur*. Acta Eruditorum.
-   - Classical foundation for Fermat's principle of least time, refraction, and the Brachistochrone curve.
-7. **Pólya, G., & Szegő, G.** (1998). *Problems and Theorems in Analysis I*. Springer-Verlag.
-   - *Part One*: Operations with functions and asymptotic expansions.
-8. **MIT OpenCourseWare.** (18.01 / 18.01SC). *Single Variable Calculus*. Massachusetts Institute of Technology.
-9. **Cambridge Mathematical Tripos.** *Part IA — Differential Equations and Analysis*. University of Cambridge.
-10. **Putnam Mathematical Competition.** *William Lowell Putnam Mathematical Competition Archive*. Mathematical Association of America.
+| Tier | Heading | Count | Content |
+|---|---|---|---|
+| L0 | Concept Checks | 8 | secant-to-tangent limit, corners vs continuity, local linearity order, geometry of the product rule, one-sided derivatives of $\lvert x \rvert$, $x^k\sin(1/x)$, implicit tangent geometry, failure of the naive chain-rule proof |
+| L1 | Foundations | 10 | limit-definition derivatives, product and quotient, nested chain rule, $a^{g(x)}$ and $\log_a g(x)$, folium of Descartes, logarithmic differentiation, $x^{x^x}$, Leibniz $n$-th derivatives, inverse trigonometric derivations, partial fractions |
+| L2 | Applications (AI/ML and Physics) | 12 | jerk-limited motion planning, Snell's law from Fermat's principle, sigmoid saturation, GELU, dual-number AD, optimal step size, implicit deep-equilibrium layers, two-class softmax, escape velocity, curvature and learning rate, relativistic acceleration, Swish convexity |
+| L3 | Challenge Proofs | 10 | Rodrigues' formula, Cauchy MVT, Landau's inequality $M_1^2 \le 4M_0M_2$, Tripos $x^{n-1}\ln x$, $f + f' \to 0$, third-order Faà di Bruno, brachistochrone ODE, a nowhere-differentiable function, osculating circle, Darboux's theorem |
+
+## References
+
+1. Spivak, *Calculus*, 4th ed., Ch. 9 (definition of the derivative), Ch. 10 (Thm. 3 product rule, Thm. 5 quotient rule, Thm. 9 chain rule).
+2. Apostol, *Calculus, Vol. I*, 2nd ed., §4.2 (derivative and continuity), §6.17 Ex. 5 (Leibniz rule), §7.6 (Landau notation).
+3. Rudin, *Principles of Mathematical Analysis*, 3rd ed., Thm. 5.2 (differentiability implies continuity), Thm. 5.3 (algebra of derivatives), Thm. 5.5 (chain rule).
+4. Carathéodory, *Theory of Functions of a Complex Variable*, Vol. I, §115 — the factorisation lemma used in Proof 5.4.
+5. Kuhn, "The derivative à la Carathéodory", *American Mathematical Monthly* **98** (1991), 40–44.
+6. Hubbard & Hubbard, *Vector Calculus, Linear Algebra, and Differential Forms*, 5th ed., §2.10 (Thm. 2.10.6, implicit function theorem).
+7. Higham, *Accuracy and Stability of Numerical Algorithms*, 2nd ed., §1.14 — the truncation/round-off balance for finite differences.
+8. Trefethen & Bau, *Numerical Linear Algebra*, Lecture 14 — stability and the $\epsilon_{\text{mach}}^{2/3}$ barrier.
+9. Griewank & Walther, *Evaluating Derivatives*, 2nd ed., Ch. 3 — forward-mode AD and dual numbers.
+10. Baydin, Pearlmutter, Radul & Siskind, "Automatic differentiation in machine learning: a survey", *JMLR* **18** (2018), 1–43, §3.1.
+11. Goodfellow, Bengio & Courville, *Deep Learning*, §6.3 (activation functions), §6.5 (backpropagation as the chain rule).
+12. Demidovich, *Problems in Mathematical Analysis*, Ch. II, Problems 651–1000 — the source of several L1 and L3 exercises.
+13. Graham, Knuth & Patashnik, *Concrete Mathematics*, 2nd ed., §5.1 (Pascal's identity), §9.2 (O and o notation).

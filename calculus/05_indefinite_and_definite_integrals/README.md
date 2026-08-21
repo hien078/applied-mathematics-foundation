@@ -1,105 +1,165 @@
-# Topic 05: Indefinite and Definite Integrals — Calculus Mastery Module
+# Module 05 — Indefinite and Definite Integrals
 
-**Status:** Active  
-**Level:** Core Foundation (Part III of Calculus Series)  
-**Target Audience:** Mathematical Modelers, Physicists, AI/ML Researchers, Applied Mathematicians  
+Two constructions share the name "integral", and they start from opposite ends. The
+**indefinite integral** $\int f(x)\,dx$ is defined by inverting differentiation: it is the
+family of functions whose derivative is $f$. The **definite integral** $\int_a^b f(x)\,dx$ is
+defined by cutting $[a,b]$ into pieces, bounding $f$ above and below on each piece, and
+squeezing the two totals together. Nothing in the second definition mentions a derivative.
 
----
+The module builds both from the ground up — partitions, mesh, Darboux sums, upper and lower
+integrals, tagged Riemann sums — and then proves the two theorems that join them. Along the
+way it settles which functions are integrable at all: continuity suffices, monotonicity
+suffices, and the Dirichlet function shows that boundedness alone does not.
 
-## 📌 Module Overview
+The joining theorem is the Fundamental Theorem of Calculus. Part I says the accumulation
+function $F(x) = \int_a^x f$ is differentiable with $F' = f$, which is an *existence* result:
+every continuous function on a closed interval has an antiderivative, whether or not a formula
+for it exists. Part II says any antiderivative evaluates the definite integral by two
+subtractions. Both are proved in full in Section 5, from the Mean Value Theorem and the
+Darboux criterion, with neither proof leaning on the other's conclusion.
 
-Integration is the fundamental operation of continuous accumulation. While differentiation breaks complex continuous processes down into instantaneous rates of change, integration synthesizes local information—density, flux, probability, work, gradient vectors—back into global quantities.
+The rest is machinery and consequence: substitution and parts as the chain and product rules
+read backwards, partial fractions and the Weierstrass half-angle substitution, the Leibniz
+rule for differentiating under the integral sign, and the quadrature rules with their $O(h)$,
+$O(h^2)$ and $O(h^4)$ error orders — the tools that turn "the integral exists" into a number.
 
-This module delivers a complete first-principles construction of integration:
-1. **The Antiderivative (Indefinite Integral)**: The inverse operation of differentiation, representing the family of functions whose rate of change recovers the integrand.
-2. **Darboux & Riemann Definite Integrals**: The rigorous limit of finite sum approximations over partitions, establishing the exact geometric concept of signed area and measure accumulation.
-3. **The Fundamental Theorem of Calculus (FTC Parts I & II)**: The profound bridge linking differential calculus (local rates) to integral calculus (global accumulation).
-4. **Differentiation Under the Integral Sign (Leibniz Rule)**: Parametric integration and the "Feynman Trick" for evaluating difficult definite integrals and continuous loss functions.
-5. **Systematic Integration Techniques**: Master-level mastery of $u$-substitution, integration by parts (IBP), partial fraction decomposition (PFD), trigonometric substitutions, and the Weierstrass universal substitution ($t = \tan(x/2)$).
-6. **Numerical & Applied Quadrature**: Numerical integration algorithms (Trapezoidal, Simpson's, Gaussian Quadrature), error bounds, and applications in continuous probability (PDF/CDF), continuous neural ODEs, and ML expected risk minimization.
+> [!NOTE]
+> **Fundamental Theorem of Calculus.** If $f$ is continuous on $[a, b]$, then
+> $F(x) = \int_a^x f(t)\,dt$ satisfies $F'(x) = f(x)$ (Part I); and if $f$ is Riemann integrable
+> on $[a, b]$ and $g$ is continuous on $[a, b]$, differentiable on $(a, b)$, with $g' = f$, then
+> $\int_a^b f(x)\,dx = g(b) - g(a)$ (Part II). Drop continuity of $g$ at an interior point and the
+> formula produces nonsense: it reports $\int_{-1}^{1} x^{-2}\,dx = -2$ for a strictly positive
+> integrand.
 
-Accompanied by a **4-Level Mastery Exercise Package** (40 fully solved problems), this module connects rigorous analysis (Spivak, Apostol, Demidovich) to physical conservation laws and state-of-the-art AI architectures.
+## Prerequisites
 
----
+- [calculus/03 — Single-Variable Derivatives](../03_single_variable_derivatives/) — the Mean
+  Value Theorem, the chain rule and the product rule are the engine of every proof here.
 
-## 🎯 Learning Objectives
+Useful but not required: [calculus/02 — Limits and Continuity](../02_limits_and_continuity/)
+for uniform continuity, the Extreme Value Theorem and the Squeeze Theorem.
 
-By completing this module, you will be able to:
+**Downstream — this module unlocks:**
 
-1. **Construct Definite Integrals from First Principles**: Define partitions, mesh size, upper/lower Darboux sums, and tagged Riemann sums, proving integrability for bounded continuous and piecewise monotonic functions.
-2. **Prove and Apply the Fundamental Theorem of Calculus**: Execute rigorous proofs of FTC I and FTC II using the Mean Value Theorem (MVT) and Darboux bounds, avoiding common pitfalls with discontinuous integrands.
-3. **Master Parametric Differentiation (Leibniz Integral Rule)**: Apply Leibniz's rule with variable boundaries and parametric integrands, solving non-standard integrals via the Feynman integration technique.
-4. **Deploy Advanced Integration Techniques**: Execute non-trivial antiderivatives using algebraic substitutions, recursive integration by parts, partial fractions with irreducible quadratics, and Weierstrass tangent half-angle substitutions.
-5. **Analyze Numerical Quadrature & Error Bounds**: Derive and evaluate error bounds for Midpoint, Trapezoidal, and Simpson's $1/3$ rules ($O(h^2)$ and $O(h^4)$ convergence).
-6. **Bridge Calculus to Physics & AI/ML**: Formulate physical work, center of mass, and continuous probability expectations ($E[X], \text{Var}(X)$), and model continuous-time dynamics in AI (Neural ODEs, Softmax partition functions, continuous loss landscapes).
-7. **Solve Competition-Level Integrals**: Conquer Putnam, MIT Integration Bee, Demidovich, and Cambridge Tripos integral challenges.
+- [calculus/06 — Integral Applications: Geometry and Physics](../06_integral_applications_geometry_physics/)
+- [calculus/07 — Improper Integrals and Special Functions](../07_improper_integrals_special_functions/)
+- [calculus/15 — Ordinary Differential Equations](../15_ordinary_differential_equations/)
+- [probability_statistics/03 — Random Variables and Distribution Functions](../../probability_statistics/03_random_variables_and_distribution_functions/)
+- [numerical_methods/06 — Numerical Integration and Quadrature](../../numerical_methods/06_numerical_integration_quadrature/)
 
----
+## Learning outcomes
 
-## 📂 Module Structure
+After this module you will be able to:
 
-```text
-calculus/05_indefinite_and_definite_integrals/
-├── README.md               <-- Module Overview & Index (This File)
-├── first_principles.ipynb  <-- First-Principles Theory, Proofs, Derivations, Quadrature & AI Applications
-└── exercises.ipynb         <-- 4-Level Exercise Package (40 Problems with Full Solutions & Takeaways)
-```
+- Build a partition, compute its Darboux sums, and decide integrability from the criterion
+  $U(f,P) - L(f,P) \lt \varepsilon$ rather than from a picture.
+- Prove that continuity on a closed bounded interval implies integrability, and that
+  monotonicity does too, with the explicit gap $(b-a)\lvert f(b)-f(a)\rvert / n$.
+- Prove both parts of the Fundamental Theorem of Calculus and say precisely which hypothesis
+  each step consumes.
+- Evaluate an integral by substitution, by parts, by partial fractions, or by the Weierstrass
+  substitution $t = \tan(x/2)$, keeping the limits of integration correct.
+- Differentiate a parametric integral with moving boundaries using the Leibniz rule, and use it
+  as Feynman's technique.
+- Decide whether an improper integral converges, and quote the $p$-test.
+- Choose a quadrature rule, state its error order, and verify that order numerically.
 
----
-
-## 🗺️ First-Principles Concept Map
+## Concept map
 
 ```mermaid
 flowchart TD
-    A["Rate of Change & Local Slope"] --> B["Antiderivative F'(x) = f(x)"]
-    C["Partition of Domain & Subintervals"] --> D["Darboux Sums L(f,P) & U(f,P)"]
-    C --> E["Riemann Sums S(f,P,xi)"]
-    D --> F["Darboux / Riemann Definite Integral"]
-    E --> F
-    B --> G["Fundamental Theorem of Calculus (FTC Part I & II)"]
-    F --> G
-    G --> H["Techniques: u-sub, IBP, Partial Fractions, Trig/Weierstrass"]
-    G --> I["Leibniz Rule (Differentiation Under Integral Sign)"]
-    G --> J["Numerical Quadrature & Error Bounds"]
-    H --> K["Physics: Work, Center of Mass, Potential"]
-    I --> L["AI/ML: Expected Risk, Continuous Normalizing Flows, Softmax"]
-    J --> M["High-Dimensional Integration & Monte Carlo"]
+    A["Partition P, mesh ||P||"] --> B["Darboux sums L(f,P), U(f,P)"]
+    A --> C["Tagged Riemann sum S(f,P,xi)"]
+    B --> D["Darboux criterion: U - L < epsilon"]
+    C --> E["Riemann integrability"]
+    D --> E
+    D --> F["Continuity implies integrability"]
+    D --> G["Monotonicity implies integrability"]
+    E --> H["Definite integral"]
+    I["Antiderivative F' = f"] --> J["Indefinite integral"]
+    H --> K["FTC Part I: d/dx of accumulation"]
+    J --> K
+    H --> L["FTC Part II: evaluation by g(b) - g(a)"]
+    J --> L
+    K --> M["Leibniz rule, moving boundaries"]
+    L --> N["Substitution, parts, partial fractions, Weierstrass"]
+    L --> O["Quadrature: midpoint, trapezoid, Simpson"]
+    M --> P["Feynman trick, adjoint gradients"]
+    N --> Q["Physics: work, potential, centre of mass"]
+    O --> R["Expectations, partition functions, neural ODEs"]
 ```
 
----
+## Notation
 
-## ⚠️ Common Misconceptions Table
-
-| Misconception | Fallacy / Error | Rigorous Correction |
+| Symbol | Meaning | Convention |
 |---|---|---|
-| **Indefinite Integral Constant** | Writing $\int \frac{1}{x} dx = \ln x + C$ for all $x \in \mathbb{R} \setminus \{0\}$. | The domain is partitioned into $(-\infty, 0)$ and $(0, \infty)$. The correct antiderivative is $\ln \lvert x \rvert + C$. On disconnected domains, constants can differ on each connected component. |
-| **Naïve FTC Application** | Applying $\int_a^b f(x) dx = F(b) - F(a)$ when $f(x)$ has an essential discontinuity or asymptote in $[a, b]$ (e.g., $\int_{-1}^1 \frac{1}{x^2} dx = -2$). | FTC II requires $f$ to be continuous (or bounded and integrable with a continuous antiderivative $F$) on $[a, b]$. $\int_{-1}^1 x^{-2} dx$ is an improper integral that diverges to $+\infty$. |
-| **Variable Bound Differentiation** | Claiming $\frac{d}{dx} \int_a^x f(t) dt = f(x)$ even when integrand depends on $x$, e.g., $\frac{d}{dx}\int_0^x (x-t)dt$. | If $x$ appears inside the integrand *and* in the limit of integration, one must use the full **Leibniz Integral Rule**: $\frac{d}{dx}\int_{a(x)}^{b(x)} f(x,t)dt = f(x,b(x))b'(x) - f(x,a(x))a'(x) + \int_{a(x)}^{b(x)} \frac{\partial f}{\partial x}(x,t)dt$. |
-| **Substitution Boundaries** | Changing variables $u = g(x)$ without changing limits of integration or checking monotonicity/differentiability of $g(x)$. | Definite integration substitution requires $\int_a^b f(g(x))g'(x)dx = \int_{g(a)}^{g(b)} f(u)du$, where $g$ must be continuously differentiable on $[a,b]$. |
-| **Riemann Sum Limit Existence** | Assuming any infinite sum over a partition equals a Riemann integral without checking partition mesh $\lim_{n \to \infty} \Vert P_n \Vert = 0$. | The limit of Riemann sums converges to the definite integral if and only if the mesh size (maximum subinterval width) approaches zero and $f$ is Riemann integrable. |
+| $\int f(x)\,dx$ | indefinite integral: the family of antiderivatives of $f$ | `\,` before the differential |
+| $\int_a^b f(x)\,dx$ | Riemann (equivalently Darboux) integral of $f$ over $[a,b]$ | `\,` before the differential |
+| $P = \lbrace x_0, \dots, x_n \rbrace$ | partition of $[a,b]$ with $a = x_0 \lt \dots \lt x_n = b$ | |
+| $\Delta x_i$ | width $x_i - x_{i-1}$ of the $i$-th subinterval | |
+| $\lVert P \rVert$ | mesh of $P$, i.e. $\max_i \Delta x_i$ | `\lVert ... \rVert`, never `\Vert` |
+| $m_i$, $M_i$ | $\inf$ and $\sup$ of $f$ on $[x_{i-1}, x_i]$ | |
+| $L(f,P)$, $U(f,P)$ | lower and upper Darboux sums | |
+| $S(f,P,\xi)$ | Riemann sum with tags $\xi_i \in [x_{i-1}, x_i]$ | |
+| $\operatorname{osc}(f, S)$ | oscillation $\sup_S f - \inf_S f$ | `\operatorname`, never `\DeclareMathOperator` |
+| $\varepsilon$, $\delta$ | the limit quantifiers | $\varepsilon$, never $\epsilon$ |
+| $\lvert \cdot \rvert$ | absolute value | `\lvert ... \rvert` |
 
----
+## Core results
 
-## 📊 Exercise Progression Summary
+| Result | Statement | Hypotheses that cannot be dropped |
+|---|---|---|
+| Theorem 4.1 | Two antiderivatives of $f$ on an interval differ by a constant | $I$ connected; on $\mathbb{R} \setminus \lbrace 0 \rbrace$ the constants are independent |
+| Theorem 4.2 | Darboux criterion: integrable iff $U(f,P) - L(f,P) \lt \varepsilon$ for some $P$ | $f$ bounded, so $L$ and $U$ are finite |
+| Theorem 4.3 | Continuity on $[a,b]$ implies integrability | closed **and** bounded interval, for uniform continuity |
+| Theorem 4.4 | Monotonicity on $[a,b]$ implies integrability, gap $=(b-a)\lvert f(b)-f(a)\rvert/n$ | monotone, so $m_i, M_i$ are endpoint values and telescope |
+| Theorem 4.5 | Lebesgue's criterion: integrable iff discontinuities have measure zero | cited, not proved here — Apostol, *Mathematical Analysis*, Thm 7.48 |
+| Theorem 4.7 | FTC I: $f$ continuous $\Rightarrow \frac{d}{dx}\int_a^x f = f(x)$ | continuity at $x$; a jump leaves $F$ with unequal one-sided derivatives |
+| Theorem 4.8 | FTC II: $\int_a^b f = g(b) - g(a)$ when $g' = f$ | $f$ integrable; $g$ continuous on the **closed** interval |
+| Theorem 4.9 | Leibniz rule: two boundary terms plus $\int \partial f/\partial x$ | $f, \partial f/\partial x$ continuous on the rectangle; $u, v \in C^1$ |
+| Theorem 4.10 | Substitution: $\int_a^b f(g)g' = \int_{g(a)}^{g(b)} f$ | $g \in C^1$, $f$ continuous; monotonicity of $g$ is **not** needed |
+| Theorem 4.11 | Parts: $\int_a^b uv' = [uv]_a^b - \int_a^b vu'$ | $u, v \in C^1$ |
 
-| Level | Category / Target Audience | Problem Count | Core Competencies Developed |
-|---|---|---|---|
-| **Level 0 — Concept Check** | Intuition & Conceptual Reasoning | 8 Problems | Geometric area logic, Darboux bounds, FTC hypotheses, improper integral convergence testing. |
-| **Level 1 — Foundation** | Standard Techniques & Computations | 11 Problems | $u$-substitution, IBP, partial fractions, trig substitution, Weierstrass substitution, Riemann sum limits. |
-| **Level 2 — Applications in Physics & AI/ML** | Physics Modeling & Machine Learning | 11 Problems | Work, electric potential, continuous expectations $E[X]$, Gaussian integrals, Neural ODEs, loss risk minimization. |
-| **Level 3 — Challenge & Olympiad** | Putnam, Cambridge Tripos, Demidovich | 10 Problems | Feynman trick, Frullani integrals, symmetry tricks, Polya integral bounds, analysis proofs. |
+## Common misconceptions
 
-**Total Problems:** **40 fully solved problems** with step-by-step KaTeX math, boxed answers, and explicit takeaways.
+| Misconception | The error | Correction |
+|---|---|---|
+| $\int \frac{dx}{x} = \ln x + C$ on all of $\mathbb{R} \setminus \lbrace 0 \rbrace$ | treating a disconnected domain as one interval | $\ln \lvert x \rvert + C$, and by Theorem 4.1 the constant may differ on $(-\infty,0)$ and $(0,\infty)$ |
+| $\int_{-1}^{1} x^{-2}\,dx = \left[-\tfrac{1}{x}\right]_{-1}^{1} = -2$ | applying Theorem 4.8 through an interior singularity | $-1/x$ is not continuous on $[-1,1]$; the integral is improper and diverges to $+\infty$ |
+| $\frac{d}{dx}\int_a^x f(x,t)\,dt = f(x,x)$ when $x$ also sits inside the integrand | using Theorem 4.7 where Theorem 4.9 is required | the answer carries an extra $\int_a^x \frac{\partial f}{\partial x}(x,t)\,dt$ term |
+| Substituting $u = g(x)$ without moving the limits | mixing $x$-limits with a $u$-integrand | Theorem 4.10 replaces $[a,b]$ by $[g(a), g(b)]$; the orientation of those endpoints carries the sign |
+| Any $\sum f(\xi_i)\Delta x_i$ with $n \to \infty$ converges to the integral | ignoring the mesh and integrability | the mesh $\lVert P \rVert$ must go to $0$ **and** $f$ must be integrable; the Dirichlet function gives $1$ or $0$ from the same partition |
+| "It has no elementary antiderivative" means the integral does not exist | conflating the indefinite and definite integrals | $\int_0^1 e^{-x^2}\,dx$ exists by Theorem 4.3 and equals $\tfrac{\sqrt{\pi}}{2}\operatorname{erf}(1)$ |
 
----
+## Exercise index
 
-## 📖 Recommended References
+[`exercises.ipynb`](exercises.ipynb) — 40 problems, every one fully solved, with a code cell
+that recomputes each numeric or algorithmic answer.
 
-- **Spivak, M.** *Calculus* (4th Ed.) — Chapters 13, 14, 15, 18 & 19. (Incomparable treatment of Darboux sums, FTC proofs, and transcendental functions).
-- **Apostol, T. M.** *Calculus, Volume I* (2nd Ed.) — Chapters 1, 2 & 5. (Axiomatic measure-first approach to integration, step functions, and FTC).
-- **Stewart, J.** *Calculus: Early Transcendentals* (8th Ed.) — Chapters 5 & 7. (Comprehensive computational foundation and physical applications).
-- **Demidovich, B. P.** *Problems in Mathematical Analysis* — Chapters IV & V. (Classic collection of classic, computational, and challenging integrals).
-- **Pólya, G., & Szegő, G.** *Problems and Theorems in Analysis I* — Part I (Integration techniques, limits of sequences of integrals, asymptotic evaluations).
-- **Putnam Competition Archive** — Mathematical Association of America (Definite integral tricks, functional equations under integrals).
-- **Cambridge Mathematical Tripos** — Part IA Examination Papers (Integration by parts reductions, contour integration previews, special functions).
-- **MIT Integration Bee Archives** — Annual Competition Problems (High-speed integration techniques and algebraic transformations).
+| Tier | Focus | Count |
+|---|---|---|
+| L0 — Concept Checks | one-line hypothesis checks: the $-2$ fallacy, net signed area, FTC I with a composite limit, per-component constants, odd symmetry | 5 |
+| L1 — Foundations | Riemann-sum limits, substitution, parts, partial fractions, trigonometric and Weierstrass substitutions, the Leibniz rule, Darboux sums of a constant, the Dirichlet function, the $p$-test | 14 |
+| L2 — Applications (AI/ML and Physics) | work by a Duffing spring, potential of a charged rod, centre of mass of a semicircular plate, exponential mean, uniform entropy, Gaussian integral and partition function, Laplace $L_1$ risk, Simpson error bound, neural-ODE flow, ROC AUC | 11 |
+| L3 — Challenge Proofs | King's property, Feynman differentiation, Frullani, Pólya's concentrating kernel, Wallis reduction, the Dirichlet integral, a floor-function series, Bonnet's second mean value theorem, a Putnam logarithmic integral | 10 |
+
+L2 contains four genuine physics problems (Duffing work, rod potential, semicircular centroid,
+and the Gaussian integral via polar coordinates).
+
+## References
+
+- Spivak, M. *Calculus*, 4th ed. — Ch. 13 (Darboux definition, integrability criterion), Ch. 14
+  (FTC, Theorems 1 and 2), Ch. 18–19 (log and exp).
+- Apostol, T. M. *Mathematical Analysis*, 2nd ed. — Thm 7.19 (Riemann–Darboux equivalence),
+  §7.26 Thm 7.48 (Lebesgue's criterion for Riemann integrability).
+- Apostol, T. M. *Calculus, Volume I*, 2nd ed. — Ch. 1–2 (step-function construction), Ch. 5
+  (FTC and integration techniques).
+- Rudin, W. *Principles of Mathematical Analysis*, 3rd ed. — §6.1–6.7 (Thm 6.6), Thm 6.20
+  (FTC I), Thm 6.21 (FTC II).
+- Stewart, J. *Calculus: Early Transcendentals*, 8th ed. — Ch. 5 (definite integral), Ch. 7
+  (substitution, parts, partial fractions, trigonometric and Weierstrass substitutions).
+- Heath, M. T. *Scientific Computing: An Introductory Survey*, 2nd ed. — Ch. 8 (quadrature
+  rules and the error constants quoted in Section 7).
+- Demidovich, B. P. *Problems in Mathematical Analysis* — Ch. IV–V.
+- Pólya, G., and Szegő, G. *Problems and Theorems in Analysis I* — Part I, Problems 1–100
+  (limits of integral sequences).
