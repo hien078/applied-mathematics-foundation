@@ -56,9 +56,9 @@ TIER_RE = re.compile(r"^##\s+(L[0-3])\s*[—–-]\s*(.+?)\s*$", re.MULTILINE)
 FIELD_LABELS = {
     "statement": [r"Problem\s+Statement", r"Statement", r"Problem"],
     "intuition": [r"(?:First[-\s]Principles\s+)?Intuition(?:\s*[/&]\s*[\w\s]+)?",
-                  r"Idea", r"Setup", r"Why\s+this\s+matters"],
+                  r"Idea", r"Why\s+this\s+matters"],
     "solution": [r"(?:Step[-\s]by[-\s]Step\s+)?Solution(?:\s*[&/]\s*Proof)?",
-                 r"Proof(?:\s*[&/]\s*Solution)?", r"Derivation", r"Working", r"Answer"],
+                 r"Proof(?:\s*[&/]\s*Solution)?", r"Derivation", r"Working"],
     "takeaway": [r"Key\s+Insight\s*/\s*Takeaway", r"Key\s+Takeaway", r"Takeaway",
                  r"Key\s+Insight", r"Key\s+idea", r"Lesson"],
 }
@@ -82,13 +82,22 @@ def extract_fields(body: str) -> dict[str, str | None]:
                 hits.append((field, m.start(), m.end()))
                 break
 
+    # A block runs until a label of a LATER field appears. Without this rule a solution
+    # that opens with its own `**Setup.**` or restates `**Statement.**` would be sliced
+    # to nothing by its own sub-heading.
+    order = {k: i for i, k in enumerate(FIELD_LABELS)}
     found: dict[str, str | None] = {k: None for k in FIELD_LABELS}
     for i, (field, start, end) in enumerate(hits):
-        stop = hits[i + 1][1] if i + 1 < len(hits) else len(body)
-        if found[field] is None:
-            text = body[end:stop].strip()
-            if text:
-                found[field] = text
+        if found[field] is not None:
+            continue
+        stop = len(body)
+        for later_field, later_start, _ in hits[i + 1:]:
+            if order[later_field] > order[field]:
+                stop = later_start
+                break
+        text = body[end:stop].strip()
+        if text:
+            found[field] = text
 
     # A problem with no statement label still has one: the text before the first label.
     if found["statement"] is None:
