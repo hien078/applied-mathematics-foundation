@@ -34,21 +34,89 @@ REPO = Path(__file__).resolve().parent.parent
 SCHEMA_VERSION = "1.0"
 
 SECTION_RE = re.compile(r"^##\s+(\d+)\.\s+(.+?)\s*$", re.MULTILINE)
+# `### Theorem 4.1 — Title`, `### Theorem 4.1 (Title)`, and `### Theorem 4.1` all occur.
 OBJECT_RE = re.compile(
     r"^###\s+(Definition|Theorem|Proposition|Lemma|Corollary|Proof|Example|Algorithm|Remark)"
-    r"\s+([\d.]+)\s*(?:[—–-]\s*(.*?))?\s*$",
+    r"\s+([\d.]+)\s*(?:[—–:-]\s*(.*?)|\((.*?)\))?\s*$",
     re.MULTILINE,
 )
-PROBLEM_RE = re.compile(r"^###\s+Problem\s+(L([0-3])\.(\d+))\s*[—–-]\s*(.+?)\s*$", re.MULTILINE)
+# The title is optional: most modules write `### Problem L0.1 — Title`, a few write
+# `### Problem L0.1` alone.
+PROBLEM_RE = re.compile(
+    r"^###\s+Problem\s+(L([0-3])\.(\d+))\s*(?:[—–:.-]\s*(.+?))?\s*$", re.MULTILINE)
 TIER_RE = re.compile(r"^##\s+(L[0-3])\s*[—–-]\s*(.+?)\s*$", re.MULTILINE)
 
-FIELD_PATTERNS = {
-    "statement": r"\*\*Statement\.?\*\*\s*(.*?)(?=\n\*\*|\n### |\Z)",
-    "intuition": r"\*\*Intuition\.?\*\*\s*(.*?)(?=\n\*\*|\n### |\Z)",
-    "solution": r"\*\*Solution\.?\*\*\s*(.*?)(?=\*\*Key takeaway|\Z)",
-    "takeaway": r"\*\*Key takeaway\.?\*\*\s*(.*?)(?=\n### |\Z)",
+# The repository grew several block dialects: bold-with-period (`**Statement.**`),
+# bold-with-colon (`**Problem Statement:**`), italic (`*Intuition:*`), h4 headings
+# (`#### First-Principles Intuition`) and blockquoted (`> **Key Takeaway:**`). Content may
+# sit on the same line as its label or on the next. Rather than one regex per dialect,
+# locate every KNOWN label, then slice the text between consecutive labels. Only known
+# labels count as boundaries, so ordinary bold text inside a solution is never mistaken
+# for one.
+FIELD_LABELS = {
+    "statement": [r"Problem\s+Statement", r"Statement", r"Problem"],
+    "intuition": [r"(?:First[-\s]Principles\s+)?Intuition(?:\s*[/&]\s*[\w\s]+)?",
+                  r"Idea", r"Setup", r"Why\s+this\s+matters"],
+    "solution": [r"(?:Step[-\s]by[-\s]Step\s+)?Solution(?:\s*[&/]\s*Proof)?",
+                 r"Proof(?:\s*[&/]\s*Solution)?", r"Derivation", r"Working", r"Answer"],
+    "takeaway": [r"Key\s+Insight\s*/\s*Takeaway", r"Key\s+Takeaway", r"Takeaway",
+                 r"Key\s+Insight", r"Key\s+idea", r"Lesson"],
 }
-BOXED_RE = re.compile(r"\$\$\s*\\boxed\{(.*?)\}\s*\$\$", re.DOTALL)
+
+_ALT = "|".join(p for pats in FIELD_LABELS.values() for p in pats)
+# line start, optional decoration, a known label, optional trailing punctuation/decoration
+BOUNDARY_RE = re.compile(
+    rf"^[ \t]{{0,3}}(?:>[ \t]*)?(?:\*\*|\*|#{{3,6}}[ \t]+)?[ \t]*"
+    rf"(?P<label>{_ALT})"
+    rf"[ \t]*[.:]?[ \t]*(?:\*\*|\*)?[ \t]*[.:]?",
+    re.MULTILINE | re.IGNORECASE,
+)
+
+
+def extract_fields(body: str) -> dict[str, str | None]:
+    hits = []
+    for m in BOUNDARY_RE.finditer(body):
+        label = m.group("label")
+        for field, patterns in FIELD_LABELS.items():
+            if any(re.fullmatch(p, label, re.IGNORECASE) for p in patterns):
+                hits.append((field, m.start(), m.end()))
+                break
+
+    found: dict[str, str | None] = {k: None for k in FIELD_LABELS}
+    for i, (field, start, end) in enumerate(hits):
+        stop = hits[i + 1][1] if i + 1 < len(hits) else len(body)
+        if found[field] is None:
+            text = body[end:stop].strip()
+            if text:
+                found[field] = text
+
+    # A problem with no statement label still has one: the text before the first label.
+    if found["statement"] is None:
+        lead = (body[: hits[0][1]] if hits else body).strip()
+        if lead:
+            found["statement"] = lead
+    return found
+
+
+def boxed_answer(body: str) -> str | None:
+    r"""Extract the content of the first `\boxed{...}`, matching braces properly.
+
+    `$$\boxed{x}$$` is only the simplest form; the repository also writes
+    `$$\text{Result: } \boxed{x}$$` and puts the box inside an aligned block, so anchoring
+    on `$$` fails. Scan for the macro and balance its braces instead.
+    """
+    i = body.find(r"\boxed{")
+    if i < 0:
+        return None
+    j = i + len(r"\boxed{")
+    depth = 1
+    while j < len(body) and depth:
+        if body[j] == "{":
+            depth += 1
+        elif body[j] == "}":
+            depth -= 1
+        j += 1
+    return body[i + len(r"\boxed{"): j - 1].strip() if depth == 0 else None
 
 
 class Coverage:
@@ -111,7 +179,7 @@ def parse_theory(nb: dict, out_dir: Path, write: bool, cov: Coverage) -> dict:
         objects.append({
             "kind": m.group(1),
             "number": m.group(2),
-            "title": (m.group(3) or "").strip(),
+            "title": (m.group(3) or m.group(4) or "").strip(),
             "body": body.strip(),
         })
 
@@ -135,8 +203,15 @@ def parse_theory(nb: dict, out_dir: Path, write: bool, cov: Coverage) -> dict:
 
 
 def parse_problems(nb: dict, cov: Coverage) -> list[dict]:
+    """Collect each problem from the heading cell through every cell before the next problem.
+
+    Areas differ: some keep statement, solution and takeaway in one markdown cell, others
+    split them across several, with the checking code cell in between. Accumulate until the
+    next `### Problem` heading appears.
+    """
     problems: list[dict] = []
     tier_titles: dict[str, str] = {}
+    groups: list[dict] = []          # {"head": match, "md": [...], "code": [...]}
     current: dict | None = None
 
     for c in nb.get("cells", []):
@@ -146,32 +221,35 @@ def parse_problems(nb: dict, cov: Coverage) -> list[dict]:
                 tier_titles[t.group(1)] = t.group(2)
             m = PROBLEM_RE.search(s)
             if m:
-                body = s[m.end():]
-                current = {
-                    "id": m.group(1),
-                    "tier": f"L{m.group(2)}",
-                    "number": int(m.group(3)),
-                    "title": m.group(4),
-                    "checks": [],
-                }
-                for field, pat in FIELD_PATTERNS.items():
-                    hit = re.search(pat, body, re.DOTALL)
-                    if hit:
-                        current[field] = hit.group(1).strip()
-                    else:
-                        current[field] = None
-                        cov.miss(field)
-                boxed = BOXED_RE.search(body)
-                current["answer"] = boxed.group(1).strip() if boxed else None
-                if not boxed:
-                    cov.miss("answer")
-                problems.append(current)
-                cov.problems += 1
+                current = {"head": m, "md": [s[m.end():]], "code": []}
+                groups.append(current)
+                continue
+            if current is not None:
+                current["md"].append(s)
         elif c.get("cell_type") == "code" and current is not None:
-            current["checks"].append({"source": s, "stdout": text_outputs(c)})
+            current["code"].append({"source": s, "stdout": text_outputs(c)})
 
-    for p in problems:
+    for g in groups:
+        m = g["head"]
+        body = "\n\n".join(g["md"])
+        p = {
+            "id": m.group(1),
+            "tier": f"L{m.group(2)}",
+            "number": int(m.group(3)),
+            "title": (m.group(4) or "").strip() or None,
+            "checks": g["code"],
+        }
+        for field, value in extract_fields(body).items():
+            p[field] = value
+            if value is None:
+                cov.miss(field)
+        p["answer"] = boxed_answer(body)
+        if p["answer"] is None:
+            cov.miss("answer")
         p["tier_title"] = tier_titles.get(p["tier"])
+        problems.append(p)
+        cov.problems += 1
+
     return problems
 
 

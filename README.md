@@ -54,7 +54,7 @@ verification and figures. Adding them is the current upgrade, and it is not done
 <!-- curriculum-table:start -->
 | Area | Modules | Solved Problems | Code Cells | Figures |
 |---|:---:|:---:|:---:|:---:|
-| [Calculus](calculus/README.md) | 15 | 605 | 128 | 14 |
+| [Calculus](calculus/README.md) | 15 | 605 | 655 | 45 |
 | [Calculus to Optimization](calculus_optimization/README.md) | 4 | 80 | 0 | 0 |
 | [Differential Equations](differential_equations/README.md) | 8 | 160 | 0 | 0 |
 | [Graph Theory](graph_theory/README.md) | 7 | 140 | 0 | 0 |
@@ -63,9 +63,9 @@ verification and figures. Adding them is the current upgrade, and it is not done
 | [Mathematical Reasoning](mathematical_reasoning/README.md) | 6 | 120 | 0 | 0 |
 | [Numerical Computing](numerical_computing/README.md) | 5 | 100 | 0 | 0 |
 | [Numerical Methods](numerical_methods/README.md) | 8 | 160 | 0 | 0 |
-| [Optimization](optimization/README.md) | 8 | 160 | 28 | 0 |
-| [Probability and Statistics](probability_statistics/README.md) | 10 | 200 | 41 | 15 |
-| **TOTAL** | **87** | **2,359** | **1020** | **80** |
+| [Optimization](optimization/README.md) | 8 | 160 | 231 | 24 |
+| [Probability and Statistics](probability_statistics/README.md) | 10 | 200 | 281 | 32 |
+| **TOTAL** | **87** | **2,359** | **1990** | **152** |
 <!-- curriculum-table:end -->
 
 This table is generated. Regenerate it, never edit it by hand:

@@ -1,109 +1,192 @@
-# Topic 09: Taylor & Power Series — Calculus Mastery Module
+# Module 09 — Taylor and Power Series
 
-**Status:** Active  
-**Level:** Core Foundation (Part IV of Calculus Series)  
-**Target Audience:** Mathematical Modelers, AI Researchers, Applied Mathematicians, Physicists  
+Polynomials are the only functions a computer really evaluates: addition and multiplication,
+nothing else. Everything transcendental that a numerical library reports — $\exp$, $\ln$,
+$\sin$, the error function, a GELU activation — is a polynomial in disguise, together with a
+promise about how far the disguise can be trusted. This module supplies both halves: the
+polynomial, and the promise.
 
----
+The first half is local. Matching the first $n$ derivatives of $f$ at a point $a$ produces the
+degree-$n$ Taylor polynomial $P_n$, and the identity $f = P_n + R_n$ is exact by definition —
+all the content sits in the four available descriptions of $R_n$. The integral form is an exact
+formula, Lagrange and Cauchy trade exactness for weaker hypotheses and an uncomputable
+intermediate point, and Peano gives only an order of vanishing. Choosing among them is the
+practical skill: a certified error bar comes from Theorem 4.1 or 4.2, an order-of-convergence
+claim comes from Theorem 4.4.
 
-## 📌 Module Overview
+The second half is global. Letting $n \to \infty$ turns the polynomial into a power series, and
+a new question appears: where does it converge, and does it converge to the function it came
+from. Cauchy-Hadamard answers the first with a $\limsup$; $e^{-1/x^2}$ answers the second with a
+flat no. In between sits the result the module is named after — inside its radius a power series
+is a $C^{\infty}$ function that may be differentiated and integrated one term at a time.
 
-Polynomials are the simplest mathematical functions: they require only addition and multiplication, making them trivially easy to differentiate, integrate, evaluate, and compute on modern digital hardware. **Taylor & Power Series** provide the universal bridge connecting complex, non-linear transcendental functions ($\exp, \ln, \sin, \cos$, activation functions, potential wells) to infinite polynomial representations.
+The payoff is everywhere downstream. Second-order local models for optimization, the harmonic
+approximation to any stable equilibrium, the delta method behind the central limit theorem's
+error terms, and every finite-difference stencil in numerical analysis are all one truncated
+Taylor expansion plus an honest remainder.
 
-This module delivers a rigorous, first-principles foundation for local polynomial approximations, remainder bounds, infinite power series convergence, term-by-term operations, asymptotic expansions, and complex power series.
+> [!NOTE]
+> **The theorem this module is named after (Theorem 4.7).** If $\sum_n a_n (x-a)^n$ has radius
+> of convergence $R \gt 0$ and sum $f$, then $f$ is differentiable on $(a-R, a+R)$ with
+> $f'(x) = \sum_{n \ge 1} n\, a_n (x-a)^{n-1}$, and the differentiated series has radius exactly
+> $R$. Iterating gives $f \in C^{\infty}(a-R, a+R)$ and, by Corollary 4.8,
+> $a_n = f^{(n)}(a)/n!$ — a convergent power series is always the Taylor series of its own sum.
+> The word *interior* is not decoration: $\sum_n x^n/n$ converges at $x = -1$ while its
+> derivative series diverges there.
 
-Key pillars covered in this module:
-1. **Taylor Polynomials & Contact Order**: How matching $n$ derivatives at a point $x=a$ constructs the unique optimal local polynomial approximation $T_n(x)$.
-2. **The Three Remainder Theorems**: Rigorous proofs and practical error bounding using **Lagrange**, **Cauchy**, and **Integral** remainder forms.
-3. **Power Series Convergence**: Complete theory of convergence intervals and the **Cauchy-Hadamard Theorem** via limit superiors.
-4. **Analyticity & Operations**: Term-by-term differentiation and integration, Cauchy products, and Abel's Theorem for boundary behavior.
-5. **Asymptotic Notation ($O, o, \sim$)**: Local error scaling, dominant term matching, and numerical order of convergence.
-6. **Euler's Formula & Complex Exponentials**: Unification of circular functions and complex analysis through $e^{ix} = \cos x + i \sin x$.
+## Prerequisites
 
----
+| Module | What is used from it |
+|---|---|
+| [Module 03 — Single-Variable Derivatives](../03_single_variable_derivatives/) | higher derivatives, the mean value theorem, the chain and product rules |
+| [Module 08 — Sequences, Series and Convergence](../08_sequences_series_convergence/) | absolute convergence, the ratio and root tests, $\limsup$ |
 
-## 🎯 Learning Objectives
+Also assumed: the fundamental theorem of calculus and integration by parts from
+[Module 05 — Indefinite and Definite Integrals](../05_indefinite_and_definite_integrals/),
+used in Proof 5.1.
 
-By completing this module, you will be able to:
+### Downstream — modules this one unlocks
 
-1. **Construct & Analyze Local Approximations**: Derive Taylor and Maclaurin polynomials for arbitrary smooth functions and evaluate contact order.
-2. **Bound Truncation Errors Rigorously**: Select and apply the appropriate remainder form (Lagrange, Cauchy, or Integral) to establish guaranteed error bounds for numerical approximations.
-3. **Determine Convergence Domains**: Calculate the exact radius of convergence $R$ and test endpoints for any power series using the Cauchy-Hadamard formula and ratio/root tests.
-4. **Manipulate Power Series Safely**: Perform term-by-term differentiation, integration, substitution, and Cauchy multiplication within the interior of convergence $(a-R, a+R)$.
-5. **Apply Asymptotic Big-O Arithmetic**: Simplify complex limit expressions, analyze floating-point numerical stability, and determine finite-difference truncation errors.
-6. **Bridge Pure Theory to Physics & AI**: Model relativistic kinetic energy, pendulum non-linearities, loss surface quadratics (Hessian matrices), Newton-Raphson optimization steps, and neural network activation asymptotics (GELU, Softplus, SiLU).
-7. **Solve Competition & Tripos Problems**: Prove non-trivial series summations, perturbation expansions, and non-analytic smooth counterexamples from Putnam, Cambridge Tripos, Demidovich, and Bender & Orszag.
+| Module | What it takes from here |
+|---|---|
+| [Module 12 — Hessian, Jacobian and Curvature](../12_hessian_jacobian_curvature/) | the second-order expansion that classifies critical points |
+| [Module 15 — Ordinary Differential Equations](../15_ordinary_differential_equations/) | power-series solutions and the matrix exponential |
+| [probability_statistics/06 — Expectation, Variance and Moments](../../probability_statistics/06_expectation_variance_and_moments/) | moment generating functions as power series |
+| [probability_statistics/08 — Law of Large Numbers and CLT](../../probability_statistics/08_law_of_large_numbers_and_clt/) | the characteristic-function expansion behind the CLT |
+| [calculus_optimization/02 — Taylor Approximation and Local Models](../../calculus_optimization/02_taylor_approximation_and_local_models/) | the descent lemma and its remainder bound |
+| [optimization/02 — Unconstrained Optimality Conditions](../../optimization/02_unconstrained_optimality_conditions/) | first- and second-order optimality conditions |
+| [numerical_methods/01 — Error Analysis and Floating Point](../../numerical_methods/01_error_analysis_and_floating_point/) | truncation error and optimal step size |
 
----
+The full graph is in [`docs/prerequisites.md`](../../docs/prerequisites.md).
 
-## 📂 Module Structure
+## Learning outcomes
 
-```text
-foundations/calculus/09_taylor_and_power_series/
-├── README.md               <-- Module Overview & Index (This File)
-├── first_principles.md           <-- First-Principles Theory, Proofs, Remainder Theorems & Applications
-└── exercises.md            <-- 4-Level Exercise Package (40 Fully Solved Problems + Solutions Manual)
-```
+After this module you will be able to:
 
----
+- Build $P_n$ for a given $f$ and centre $a$, and state precisely in what sense it is the best
+  degree-$n$ polynomial approximation near $a$.
+- Choose the correct remainder form for a task — integral for an exact identity, Lagrange for a
+  certified numerical bound, Cauchy where Lagrange is too weak, Peano for an order claim — and
+  say which hypothesis each one needs.
+- Produce a guaranteed digit count for a truncated series, and verify it against the computed
+  error.
+- Compute a radius of convergence with Cauchy-Hadamard, including series where the ratio test
+  has no limit, and test endpoint behaviour separately.
+- Differentiate, integrate, substitute into and multiply power series, and justify each step by
+  the theorem that permits it.
+- Explain, with $e^{-1/x^2}$ in hand, why smoothness does not imply analyticity and why a
+  convergent Taylor series may converge to the wrong function.
+- Use $O$, $o$ and $\sim$ correctly in error estimates, including the step-size trade-off between
+  truncation and rounding error.
+- Apply expansions to relativistic energy, anharmonic oscillators, activation functions,
+  Newton's method and finite-difference stencils.
 
-## 🗺️ Concept Map
+## Concept map
 
 ```mermaid
 flowchart TD
-    A["Local Differentiability C^n"] --> B["Taylor Polynomial T_n(x)"]
-    B --> C["Remainder Representation R_n(x)"]
-    
-    C --> D1["Lagrange Remainder\n(Mean Value Theorem)"]
-    C --> D2["Cauchy Remainder\n(Cauchy MVT)"]
-    C --> D3["Integral Remainder\n(Integration by Parts)"]
-    
-    B --> E["Infinite Limit n -> inf"]
-    E --> F["Power Series sum a_n (x-a)^n"]
-    
-    F --> G["Cauchy-Hadamard Theorem\nRadius of Convergence R"]
-    G --> H["Term-by-Term Calculus\n(Diff & Int in (a-R, a+R))"]
-    
-    F --> I["Asymptotic Big-O Algebra"]
-    F --> J["Euler's Formula e^(ix)"]
-    
-    H --> K1["Physics: Relativistic Energy,\nPotential Wells, Pendulums"]
-    I --> K2["AI/ML: Loss Quadratics,\nHessian Optimization, Activation Functions"]
+    A["f has n derivatives at a"] --> B["Taylor polynomial P_n"]
+    B --> C["Exact identity f = P_n + R_n"]
+
+    C --> D1["Integral remainder (Thm 4.1)"]
+    C --> D2["Lagrange remainder (Thm 4.2)"]
+    C --> D3["Cauchy remainder (Thm 4.3)"]
+    C --> D4["Peano remainder (Thm 4.4)"]
+
+    D1 --> E["Certified error bounds"]
+    D2 --> E
+    D4 --> F["Big-O / little-o algebra"]
+
+    B --> G["Let n go to infinity"]
+    G --> H["Power series sum a_n (x-a)^n"]
+    H --> I["Cauchy-Hadamard radius R (Thm 4.5)"]
+    I --> J["Uniform convergence on compact subintervals (Thm 4.6)"]
+    J --> K["Term-by-term calculus on (a-R, a+R) (Thm 4.7)"]
+    K --> L["Coefficients are unique (Cor 4.8)"]
+    I --> M["Endpoints: Abel's theorem (Thm 4.9)"]
+    L --> N["Smooth is not analytic (Prop 4.10)"]
+
+    E --> P1["Physics: relativity, pendulum, dipole, Planck"]
+    F --> P2["Numerics: finite differences, step size"]
+    K --> P3["ML: second-order models, activations, Fisher information"]
 ```
 
----
+## Notation
 
-## ⚠️ Common Misconceptions Table
+Drawn from [`docs/notation.md`](../../docs/notation.md); the calculus register is authoritative.
 
-| Misconception | Mathematical Reality | Correct Viewpoint / Counterexample |
+| Symbol | Meaning | Convention fixed here |
 |---|---|---|
-| **1. $C^\infty$ implies Analytic** | A function can have derivatives of all orders everywhere, yet its Taylor series fails to represent the function. | $f(x) = e^{-1/x^2}$ for $x \neq 0$ and $f(0)=0$ has $f^{(n)}(0)=0$ for all $n$. Its Maclaurin series is identically $0$, which equals $f(x)$ *only* at $x=0$. |
-| **2. Taylor series always converges everywhere** | Power series have a specific radius of convergence $R \in [0, \infty]$, determined by complex singularities. | $f(x) = \frac{1}{1+x^2}$ is smooth on $\mathbb{R}$, but its Maclaurin series $\sum (-1)^n x^{2n}$ converges only for $\lvert x \rvert \lt 1$ due to poles at $x = \pm i$ in $\mathbb{C}$. |
-| **3. Endpoints always behave like the interior** | Term-by-term differentiation and integration are guaranteed on $(a-R, a+R)$, but endpoint convergence requires Abel's Theorem. | $\sum \frac{x^n}{n}$ converges at $x = -1$ (conditional), diverges at $x=1$. Differentiating yields $\sum x^{n-1}$, which diverges at $x = -1$. |
-| **4. Big-O term $O(x^n)$ means exact equality to $C x^n$** | $O(x^n)$ denotes a set / bounding condition, not a fixed constant multiple. | $f(x) = O(x^2)$ as $x\to 0$ means $\lvert f(x) \rvert \le M \lvert x \rvert^2$ for small $\lvert x \rvert$. Adding $O(x^2) + O(x^3) = O(x^2)$. |
-| **5. Lagrange remainder works for complex-valued functions** | The Mean Value Theorem fails for vector-valued and complex-valued functions. | For $f: \mathbb{R} \to \mathbb{C}$, there is generally no single intermediate point $c \in (a, x)$ where $f(x) - f(a) = f'(c)(x-a)$. Use Integral Remainder instead. |
+| $P_n(x)$ | degree-$n$ Taylor polynomial of $f$ about $a$ | **not** $T_n$ — $T_k$ is reserved for Chebyshev |
+| $R_n(x)$ | remainder $f(x) - P_n(x)$ | four representations, Theorems 4.1 to 4.4 |
+| $f^{(n)}$ | $n$-th derivative; $f^{(0)} = f$ | |
+| $a$, $c$ | expansion centre, and the intermediate point of a mean-value form | $c$ lies strictly between $a$ and $x$ |
+| $R$ | radius of convergence | $R = 1/\limsup_n \lvert a_n \rvert^{1/n}$, with $1/0 = \infty$ |
+| $\limsup$ | upper limit of a real sequence | defined in Module 08; Definition 3.3 recalls it |
+| $O(g)$, $o(g)$ | bounded by a constant times $g$; negligible against $g$ | bare $O$ and $o$, never $\mathcal{O}$ |
+| $f \sim g$ | $f/g \to 1$ in the stated limit | asymptotic equivalence, not equality |
+| $\lvert x \rvert$ | absolute value, or complex modulus | `\lvert ... \rvert` |
+| $C^n$, $C^{\infty}$ | $n$ times continuously differentiable; smooth | smooth does **not** mean analytic |
 
----
+## Core results
 
-## 📊 Exercise Progression Summary
+| Result | Statement | Hypotheses that cannot be dropped |
+|---|---|---|
+| Theorem 4.1 — integral remainder | $R_n(x) = \frac{1}{n!}\int_a^x f^{(n+1)}(t)(x-t)^n\,dt$ | $f^{(n+1)}$ continuous on the closed interval |
+| Theorem 4.2 — Lagrange remainder | $R_n(x) = \frac{f^{(n+1)}(c)}{(n+1)!}(x-a)^{n+1}$ for some $c$ between $a$ and $x$ | $f$ real-valued; $f^{(n+1)}$ exists on the open interval |
+| Theorem 4.3 — Cauchy remainder | $R_n(x) = \frac{f^{(n+1)}(c)}{n!}(x-c)^n(x-a)$ | same as Theorem 4.2; $c$ is a different point |
+| Theorem 4.4 — Peano remainder | $R_n(x) = o((x-a)^n)$ as $x \to a$ | only $f^{(n)}(a)$; gives no bound at fixed $x$ |
+| Theorem 4.5 — Cauchy-Hadamard | $R = 1/\limsup_n \lvert a_n \rvert^{1/n}$ | none; the ratio test needs the ratio limit to exist |
+| Theorem 4.6 — Weierstrass M-test | $\sup_S \lvert u_n \rvert \le M_n$ and $\sum_n M_n \lt \infty$ give uniform convergence | $M_n$ independent of $x$; uniformity only on compacts |
+| Theorem 4.7 — term-by-term calculus | $f'(x) = \sum_{n \ge 1} n a_n (x-a)^{n-1}$, same radius $R$ | $R \gt 0$ and $x$ strictly inside $(a-R, a+R)$ |
+| Corollary 4.8 — uniqueness | $a_n = f^{(n)}(a)/n!$ | $R \gt 0$ |
+| Theorem 4.9 — Abel's limit theorem | $\sum_n a_n$ convergent $\Rightarrow \lim_{x \to 1^-} \sum_n a_n x^n = \sum_n a_n$ | convergence of $\sum_n a_n$; the converse is false |
+| Proposition 4.10 — smooth is not analytic | $e^{-1/x^2}$ is $C^{\infty}$ with all derivatives $0$ at the origin | none; its Taylor series equals $f$ only at $x = 0$ |
+| Theorem 4.11 — Borel (cited, not proved) | every real sequence is the derivative sequence of some $f \in C^{\infty}$ | proof needs a smooth partition of unity |
 
-| Level | Focus / Target Audience | Problem Count | Primary Skill Developed |
-|---|---|---|---|
-| **L0 — Concept Check** | Intuition & Geometric Understanding | 8 Problems | Contact order, remainder logic, singularity interpretation, Big-O rules |
-| **L1 — Foundation** | Core Skills & Textbook Mastery | 10 Problems | Remainder bounds, Cauchy-Hadamard radius calculation, series summations |
-| **L2 — Applications** | Physics & AI/ML Modeling | 12 Problems | Loss quadratics, Hessian steps, GELU/Softplus expansions, relativistic bounds |
-| **L3 — Challenge** | Olympiad, Tripos & Advanced Proofs | 10 Problems | Cambridge Tripos limits, Putnam identities, perturbation methods, non-analytic proofs |
-| **Total** | Complete Mastery Package | **40 Problems** | Full theoretical and computational calculus proficiency |
+## Common misconceptions
 
----
+| Misconception | Reality | Where it is settled |
+|---|---|---|
+| A $C^{\infty}$ function equals its Taylor series | The series may converge everywhere and agree with $f$ at one point only | Proposition 4.10, Example 6.6 |
+| A convergent Taylor series proves the approximation is good | Convergence of the series says nothing until $R_n \to 0$ is shown | Proposition 4.10, Section 7.3 |
+| The radius is found by the ratio test | The ratio test is a special case that needs $\lvert a_{n+1}/a_n \rvert$ to converge; the radius is always a $\limsup$ | Theorem 4.5, Example 6.3 |
+| A real function's series can only be limited by real behaviour | The radius is the distance to the nearest **complex** singularity: $1/(1+x^2)$ is smooth on $\mathbb{R}$ yet has $R = 1$ | Section 7.5 |
+| The interval of convergence behaves the same at its endpoints | Term-by-term calculus is guaranteed on the open interval only; endpoints need Abel's theorem | Theorem 4.7, Theorem 4.9 |
+| Lagrange's remainder works for any function | Its proof is a mean value theorem and fails for complex- and vector-valued $f$ | Theorem 4.2, Section 7.3 |
+| $O(x^n)$ names a specific constant multiple of $x^n$ | It is a bound with an unspecified constant, so $O(x^2) + O(x^3) = O(x^2)$ near $0$ | Definition 3.6 |
+| Peano and Lagrange say the same thing | Peano is a statement about the limit $x \to a$ and gives no number at a fixed $x$ | Theorem 4.4, Exercise L0.1 |
 
-## 📖 Recommended References
+## Exercise index
 
-- **Spivak, M.** *Calculus* (4th Edition) — Chapters 19 ("Complex Numbers"), 20 ("Complex Functions"), and 23 ("Taylor Polynomials"). Exceptional depth on remainders and non-analytic counterexamples.
-- **Apostol, T. M.** *Calculus, Volume I* (2nd Edition) — Chapters 7 & 9. Rigorous treatment of Taylor's formula, integral remainder, and power series convergence.
-- **Stewart, J.** *Calculus: Early Transcendentals* (8th Edition) — Chapter 11. Practical computations, standard Maclaurin series tables, and applications.
-- **Demidovich, B. P.** *Problems in Mathematical Analysis* — Chapters IV & V. Essential repository of Russian computational calculus problems.
-- **Bender, C. M., & Orszag, S. A.** *Advanced Mathematical Methods for Scientists and Engineers* — Chapter 1. Master guide to local asymptotics, Big-O algebra, and perturbation theory.
-- **Polya, G., & Szego, G.** *Problems and Theorems in Analysis I* — Analysis of power series, coefficients, and boundary behavior.
-- **Putnam Mathematical Competition Archives** — Classical competition problems on power series identities and limit expansions.
-- **Cambridge Mathematical Tripos (Part IA/IB)** — Differential equations, complex series, and asymptotic expansions.
+All problems are fully solved in [`exercises.ipynb`](exercises.ipynb), each with a statement, an
+intuition line, numbered solution steps, a boxed answer, a key takeaway, and a code cell that
+recomputes the answer.
+
+| Tier | Focus | Count |
+|---|---|---|
+| L0 — Concept Checks | one-line discriminations: Peano versus Lagrange, complex singularities, $O$-arithmetic, Cauchy products, Euler's formula, the non-analytic example | 6 |
+| L1 — Foundations | contact order, certified error bounds, integral and Cauchy remainders, radius by ratio and by root, Gregory's series, Abel at an endpoint | 12 |
+| L2 — Applications (AI/ML and Physics) | relativistic kinetic energy, anharmonic pendulum, van der Waals, dipole potential, Rayleigh-Jeans; GELU, SiLU, softplus, log-sum-exp, Newton's step, KL and Fisher information, optimal central-difference step | 12 |
+| L3 — Challenge Proofs | series multisection, $(1+1/n)^n$ rate, perturbation of an algebraic root, harmonic generating function, zero radius of convergence, dilogarithm reflection, Laplace's method, Stirling by Euler-Maclaurin, sawtooth Fourier series | 10 |
+
+**Total: 40 problems.**
+
+Theory, proofs and computational practice are in
+[`first_principles.ipynb`](first_principles.ipynb).
+
+## References
+
+- Rudin, W. *Principles of Mathematical Analysis*, 3rd ed. — Taylor's theorem (Thm 5.15), the
+  root-test radius (Thm 3.39), the Weierstrass M-test (Thm 7.10), term-by-term differentiation
+  (Thm 7.17), power series (Thm 8.1), Abel's theorem (Thm 8.2), and $e^{-1/x^2}$ (Ch. 8, Ex. 1).
+- Spivak, M. *Calculus*, 4th ed. — Ch. 20 (the three remainder forms), Ch. 24 (uniform
+  convergence and power series), Ch. 27 (complex power series and Euler's formula).
+- Apostol, T. M. *Calculus, Vol. I*, 2nd ed. — Ch. 7 (Taylor's formula, integral remainder),
+  Ch. 11 (sequences and series of functions, Abel's theorem).
+- Bender, C. M. and Orszag, S. A. *Advanced Mathematical Methods for Scientists and Engineers* —
+  §3.4 ($O$, $o$ and $\sim$), §6.4 (Laplace's method), §7.2 (perturbation of algebraic roots).
+- Hörmander, L. *The Analysis of Linear Partial Differential Operators I*, 2nd ed. (Thm 1.2.6) —
+  Borel's theorem, cited as Theorem 4.11.
+- Trefethen, L. N. *Approximation Theory and Approximation Practice*, Ch. 3 and Ch. 8 — why the
+  radius of convergence is the wrong figure of merit for approximation on an interval.
